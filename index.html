@@ -1,422 +1,913 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CardMax — Trade gift cards for cash</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          paper: '#EEF1EC',
-          paper2: '#E4E9E1',
-          ink: '#142018',
-          inksoft: '#4B564E',
-          emerald: '#2F6F4E',
-          emeraldDeep: '#1F4F37',
-          coral: '#FF6B4A',
-          gold: '#C9A227',
-          line: '#C6D0C2',
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CardMax — Trade gift cards for cash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+    <script>
+      function withOpacity(variable) {
+        return ({ opacityValue }) =>
+          opacityValue !== undefined
+            ? `rgb(var(${variable}) / ${opacityValue})`
+            : `rgb(var(${variable}))`;
+      }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              paper: withOpacity("--paper"),
+              paper2: withOpacity("--surface-2"),
+              ink: withOpacity("--ink"),
+              inksoft: withOpacity("--ink-soft"),
+              emerald: withOpacity("--emerald"),
+              emeraldDeep: withOpacity("--emerald-deep"),
+              coral: withOpacity("--coral"),
+              gold: withOpacity("--gold"),
+              line: withOpacity("--line"),
+            },
+            fontFamily: {
+              display: ["Fraunces", "serif"],
+              ui: ["Space Grotesk", "sans-serif"],
+              mono: ["IBM Plex Mono", "monospace"],
+            },
+          },
         },
-        fontFamily: {
-          display: ['Fraunces', 'serif'],
-          ui: ['Space Grotesk', 'sans-serif'],
-          mono: ['IBM Plex Mono', 'monospace'],
-        },
-      },
-    },
-  };
-</script>
-<style>
-  * { -webkit-tap-highlight-color: transparent; }
-  body { background: #EEF1EC; }
+      };
+    </script>
+    <style>
+      :root {
+        --paper: 238 241 236;
+        --surface: 255 255 255;
+        --surface-2: 228 233 225;
+        --line: 198 208 194;
+        --ink: 20 32 24;
+        --ink-soft: 75 86 78;
+        --emerald: 47 111 78;
+        --emerald-deep: 31 79 55;
+        --gold: 201 162 39;
+        --coral: 255 107 74;
+      }
+      html.dark {
+        --paper: 15 25 19;
+        --surface: 22 34 26;
+        --surface-2: 28 42 33;
+        --line: 42 58 47;
+        --ink: 237 242 234;
+        --ink-soft: 159 175 156;
+        --emerald: 79 161 121;
+        --emerald-deep: 107 190 148;
+        --gold: 217 182 70;
+        --coral: 255 128 100;
+      }
 
-  /* ---- Ticket / voucher signature element ---- */
-  .ticket {
-    position: relative;
-    display: flex;
-    border-radius: 20px;
-    overflow: visible;
-  }
-  .ticket .stub {
-    position: relative;
-    flex-shrink: 0;
-  }
-  .stub-left::before {
-    border-left: 2px dashed rgba(20,32,24,0.18);
-  }
-  .ticket .stub::before {
-    content: "";
-    position: absolute;
-    top: 0; bottom: 0; left: 0;
-    border-left: 2px dashed currentColor;
-    opacity: 0.35;
-  }
-  .notch {
-    position: absolute;
-    left: -12px;
-    width: 24px;
-    height: 24px;
-    background: #EEF1EC;
-    border-radius: 999px;
-    z-index: 5;
-  }
-  .notch-top { top: -12px; }
-  .notch-bottom { bottom: -12px; }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: rgb(var(--paper));
+        color: rgb(var(--ink));
+        transition: background 0.25s ease;
+      }
 
-  /* small tile version */
-  .tile-notch {
-    position: absolute;
-    top: 50%;
-    left: -9px;
-    width: 18px;
-    height: 18px;
-    background: #EEF1EC;
-    border-radius: 999px;
-    transform: translateY(-50%);
-    z-index: 5;
-  }
+      /* ---- Ticket / voucher signature element ---- */
+      .ticket {
+        position: relative;
+        display: flex;
+        border-radius: 20px;
+        overflow: visible;
+      }
+      .ticket .stub {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .stub-left::before {
+        border-left: 2px dashed rgb(var(--ink) / 0.18);
+      }
+      .ticket .stub::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 2px dashed currentColor;
+        opacity: 0.35;
+      }
+      .notch {
+        position: absolute;
+        left: -12px;
+        width: 24px;
+        height: 24px;
+        background: rgb(var(--paper));
+        border-radius: 999px;
+        z-index: 5;
+      }
+      .notch-top {
+        top: -12px;
+      }
+      .notch-bottom {
+        bottom: -12px;
+      }
 
-  .card-surface { background: #FFFFFF; }
+      /* small tile version */
+      .tile-notch {
+        position: absolute;
+        top: 50%;
+        left: -9px;
+        width: 18px;
+        height: 18px;
+        background: rgb(var(--paper));
+        border-radius: 999px;
+        transform: translateY(-50%);
+        z-index: 5;
+      }
 
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-thumb { background: #C6D0C2; border-radius: 999px; }
+      .card-surface {
+        background: rgb(var(--surface));
+      }
 
-  a, button { -webkit-tap-highlight-color: transparent; }
-  :focus-visible {
-    outline: 2px solid #2F6F4E;
-    outline-offset: 2px;
-    border-radius: 6px;
-  }
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgb(var(--line));
+        border-radius: 999px;
+      }
 
-  @media (prefers-reduced-motion: reduce) {
-    * { animation: none !important; transition: none !important; }
-  }
+      a,
+      button {
+        -webkit-tap-highlight-color: transparent;
+      }
+      :focus-visible {
+        outline: 2px solid rgb(var(--emerald));
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
 
-  .view { display: none; }
-  .view.active { display: block; }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
 
-  .navlink.active { color: #2F6F4E; }
-  .navlink.active .navdot { opacity: 1; }
-  .tab.active-tab {
-    background: #142018;
-    color: #EEF1EC;
-  }
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+      }
 
-  .fade-in { animation: fadeIn .35s ease both; }
-  @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+      .navlink.active {
+        color: rgb(var(--emerald));
+      }
+      .navlink.active .navdot {
+        opacity: 1;
+      }
+      .tab.active-tab {
+        background: rgb(var(--ink));
+        color: rgb(var(--paper));
+      }
 
-  .blur-balance { filter: blur(6px); user-select: none; }
+      .fade-in {
+        animation: fadeIn 0.35s ease both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-  dialog::backdrop { background: rgba(20,32,24,0.45); }
-  dialog { border: none; padding: 0; background: transparent; }
-</style>
-</head>
-<body class="font-ui text-ink antialiased">
+      .blur-balance {
+        filter: blur(6px);
+        user-select: none;
+      }
 
-<div class="lg:flex lg:min-h-screen">
+      dialog::backdrop {
+        background: rgb(var(--ink) / 0.45);
+      }
+      dialog {
+        border: none;
+        padding: 0;
+        background: transparent;
+      }
 
-  <!-- ============ DESKTOP SIDEBAR ============ -->
-  <aside class="hidden lg:flex lg:flex-col lg:w-64 xl:w-72 border-r border-line px-6 py-8 sticky top-0 h-screen shrink-0">
-    <div class="flex items-center gap-2 mb-10">
-      <div class="w-9 h-9 rounded-full bg-emerald flex items-center justify-center text-paper font-display font-semibold">C</div>
-      <span class="font-display text-xl font-semibold tracking-tight">CardMax</span>
+      /* ---- Sell modal: card-type segmented control ---- */
+      .segctrl {
+        display: flex;
+        background: rgb(var(--surface-2));
+        border-radius: 999px;
+        padding: 3px;
+      }
+      .segctrl button {
+        flex: 1;
+      }
+      .segbtn.seg-active {
+        background: rgb(var(--ink));
+        color: rgb(var(--paper));
+      }
+
+      /* ---- Upload dropzone ---- */
+      .dropzone {
+        border: 2px dashed rgb(var(--line));
+        transition:
+          border-color 0.15s ease,
+          background 0.15s ease;
+      }
+      .dropzone.drag-over {
+        border-color: rgb(var(--emerald));
+        background: rgb(var(--emerald) / 0.06);
+      }
+    </style>
+  </head>
+  <body class="font-ui text-ink antialiased">
+    <div class="lg:flex lg:min-h-screen">
+      <!-- ============ DESKTOP SIDEBAR ============ -->
+      <aside
+        class="hidden lg:flex lg:flex-col lg:w-64 xl:w-72 border-r border-line px-6 py-8 sticky top-0 h-screen shrink-0"
+      >
+        <div class="flex items-center gap-2 mb-10">
+          <div
+            class="w-9 h-9 rounded-full bg-emerald flex items-center justify-center text-paper font-display font-semibold"
+          >
+            C
+          </div>
+          <span class="font-display text-xl font-semibold tracking-tight"
+            >CardMax</span
+          >
+        </div>
+
+        <nav class="flex flex-col gap-1 text-sm">
+          <button
+            class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft font-medium hover:bg-paper2 transition"
+            data-view="home"
+            data-tab="sidebar"
+          >
+            <span
+              class="navdot w-1.5 h-1.5 rounded-full bg-emerald opacity-0"
+            ></span>
+            <i data-lucide="home" class="w-[18px] h-[18px]"></i>
+            Home
+          </button>
+          <button
+            class="navlink flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft font-medium hover:bg-paper2 transition"
+            data-view="transactions"
+            data-tab="sidebar"
+          >
+            <span
+              class="navdot w-1.5 h-1.5 rounded-full bg-emerald opacity-0"
+            ></span>
+            <i data-lucide="receipt" class="w-[18px] h-[18px]"></i>
+            Transactions
+          </button>
+          <button
+            class="navlink flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft font-medium hover:bg-paper2 transition"
+            data-view="me"
+            data-tab="sidebar"
+          >
+            <span
+              class="navdot w-1.5 h-1.5 rounded-full bg-emerald opacity-0"
+            ></span>
+            <i data-lucide="user" class="w-[18px] h-[18px]"></i>
+            Me
+          </button>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-line">
+          <button
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft text-sm font-medium hover:bg-paper2 transition"
+          >
+            <i data-lucide="headphones" class="w-[18px] h-[18px]"></i>
+            24/7 Support
+          </button>
+          <p class="text-xs text-inksoft/60 px-3 mt-4">
+            Signed in as LS12505263
+          </p>
+        </div>
+      </aside>
+
+      <!-- ============ MAIN COLUMN ============ -->
+      <div class="flex-1 min-w-0 pb-24 lg:pb-10">
+        <!-- Top bar -->
+        <header
+          class="flex items-center justify-between px-5 pt-6 pb-4 lg:px-10 lg:pt-8 max-w-6xl mx-auto w-full"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-full bg-paper2 border border-line flex items-center justify-center lg:hidden"
+            >
+              <i data-lucide="user" class="w-[18px] h-[18px] text-inksoft"></i>
+            </div>
+            <div>
+              <p class="text-xs text-inksoft">Welcome back</p>
+              <p class="font-display font-semibold text-lg leading-tight">
+                LS12505263
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              class="w-10 h-10 rounded-full card-surface border border-line flex items-center justify-center lg:hidden"
+              aria-label="Support"
+            >
+              <i
+                data-lucide="headphones"
+                class="w-[17px] h-[17px] text-ink"
+              ></i>
+            </button>
+            <button
+              id="themeToggle"
+              class="w-10 h-10 rounded-full card-surface border border-line flex items-center justify-center"
+              aria-label="Toggle dark mode"
+            >
+              <i
+                data-lucide="moon"
+                id="iconMoon"
+                class="w-[17px] h-[17px] text-ink"
+              ></i>
+              <i
+                data-lucide="sun"
+                id="iconSun"
+                class="w-[17px] h-[17px] text-ink hidden"
+              ></i>
+            </button>
+            <button
+              class="w-10 h-10 rounded-full card-surface border border-line flex items-center justify-center relative"
+              aria-label="Notifications"
+            >
+              <i data-lucide="bell" class="w-[17px] h-[17px] text-ink"></i>
+              <span
+                class="absolute top-1.5 right-2 w-1.5 h-1.5 bg-coral rounded-full"
+              ></span>
+            </button>
+          </div>
+        </header>
+
+        <main class="px-5 lg:px-10 max-w-6xl mx-auto w-full">
+          <!-- ======================= HOME VIEW ======================= -->
+          <section id="view-home" class="view active fade-in">
+            <div class="lg:grid lg:grid-cols-3 lg:gap-6">
+              <div class="lg:col-span-2">
+                <!-- Balance ticket -->
+                <div
+                  class="ticket bg-emerald text-paper shadow-[0_10px_30px_-12px_rgba(20,32,24,0.35)] mb-5"
+                >
+                  <div class="flex-1 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                      <p class="text-sm text-paper/75 font-medium">
+                        Available balance
+                      </p>
+                      <button
+                        id="withdrawHistoryBtn"
+                        class="text-sm text-paper/90 flex items-center gap-1 hover:text-white transition"
+                        data-view-link="transactions"
+                      >
+                        History
+                        <i
+                          data-lucide="chevron-right"
+                          class="w-[14px] h-[14px]"
+                        ></i>
+                      </button>
+                    </div>
+                    <div class="flex items-end gap-3">
+                      <span
+                        id="balanceValue"
+                        class="font-display font-semibold text-4xl lg:text-5xl tracking-tight"
+                        >₦300.00</span
+                      >
+                    </div>
+                    <p class="text-xs text-paper/60 mt-2 font-mono">
+                      Ref · LS-12505263-NG
+                    </p>
+                  </div>
+                  <div
+                    class="stub stub-left w-16 flex items-center justify-center text-paper"
+                  >
+                    <span class="notch notch-top"></span>
+                    <button
+                      id="toggleBalance"
+                      aria-label="Toggle balance visibility"
+                      class="hover:scale-110 transition"
+                    >
+                      <i data-lucide="eye" id="eyeIcon" class="w-5 h-5"></i>
+                      <i
+                        data-lucide="eye-off"
+                        id="eyeOffIcon"
+                        class="w-5 h-5 hidden"
+                      ></i>
+                    </button>
+                    <span class="notch notch-bottom"></span>
+                  </div>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+                  <button
+                    class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition"
+                    data-open-modal="bonus"
+                  >
+                    <span
+                      class="w-10 h-10 rounded-xl bg-gold/15 flex items-center justify-center"
+                    >
+                      <i
+                        data-lucide="gift"
+                        class="w-[19px] h-[19px] text-gold"
+                      ></i>
+                    </span>
+                    <span class="text-sm font-semibold">Daily Bonus</span>
+                  </button>
+                  <button
+                    class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition"
+                    data-open-modal="withdraw"
+                  >
+                    <span
+                      class="w-10 h-10 rounded-xl bg-emerald/10 flex items-center justify-center"
+                    >
+                      <i
+                        data-lucide="arrow-up"
+                        class="w-[19px] h-[19px] text-emerald"
+                      ></i>
+                    </span>
+                    <span class="text-sm font-semibold">Withdraw</span>
+                  </button>
+                  <button
+                    class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition"
+                    data-open-modal="sell"
+                  >
+                    <span
+                      class="w-10 h-10 rounded-xl bg-coral/15 flex items-center justify-center"
+                    >
+                      <i
+                        data-lucide="tag"
+                        class="w-[19px] h-[19px] text-coral"
+                      ></i>
+                    </span>
+                    <span class="text-sm font-semibold">Sell now</span>
+                  </button>
+                  <button
+                    class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition"
+                    data-open-modal="rewards"
+                  >
+                    <span
+                      class="w-10 h-10 rounded-xl bg-ink/5 flex items-center justify-center"
+                    >
+                      <i
+                        data-lucide="handshake"
+                        class="w-[19px] h-[19px] text-ink"
+                      ></i>
+                    </span>
+                    <span class="text-sm font-semibold leading-tight"
+                      >Partner Rewards</span
+                    >
+                  </button>
+                </div>
+
+                <!-- Promo voucher banner -->
+                <div class="ticket bg-gold/10 border border-gold/40 mb-8">
+                  <div
+                    class="flex-1 p-5 flex items-center justify-between gap-4 flex-wrap"
+                  >
+                    <div>
+                      <p
+                        class="text-xs uppercase tracking-wide text-gold font-semibold mb-1"
+                      >
+                        New users · bonus upgraded
+                      </p>
+                      <p class="font-display font-semibold text-xl">
+                        Up to ₦9,000 welcome bonus
+                      </p>
+                      <p class="text-sm text-inksoft mt-1">
+                        Cashback upgraded from 3% to 6% on your first sale.
+                      </p>
+                    </div>
+                    <button
+                      class="shrink-0 bg-ink text-paper text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-emeraldDeep transition"
+                    >
+                      Claim now
+                    </button>
+                  </div>
+                  <div class="stub w-4 hidden sm:flex text-gold/40">
+                    <span
+                      class="notch notch-top"
+                      style="left: -8px; width: 16px; height: 16px"
+                    ></span>
+                    <span
+                      class="notch notch-bottom"
+                      style="left: -8px; width: 16px; height: 16px"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rate ticker / desktop side panel -->
+              <aside class="hidden lg:block">
+                <div
+                  class="card-surface border border-line rounded-2xl p-5 sticky top-8"
+                >
+                  <p
+                    class="text-xs uppercase tracking-wide text-inksoft font-semibold mb-4"
+                  >
+                    Top rates today
+                  </p>
+                  <ul class="space-y-3 font-mono text-sm">
+                    <li class="flex justify-between">
+                      <span>Paysafecard</span
+                      ><span class="text-emerald">₦1,451.09</span>
+                    </li>
+                    <li class="flex justify-between">
+                      <span>Apple &amp; iTunes</span
+                      ><span class="text-emerald">₦1,343.52</span>
+                    </li>
+                    <li class="flex justify-between">
+                      <span>Sephora</span
+                      ><span class="text-emerald">₦1,075.63</span>
+                    </li>
+                    <li class="flex justify-between">
+                      <span>GameStop</span
+                      ><span class="text-emerald">₦1,047.22</span>
+                    </li>
+                  </ul>
+                  <p class="text-xs text-inksoft/60 mt-4 leading-relaxed">
+                    Rates shown per $1 face value, updated every 10 minutes.
+                  </p>
+                </div>
+              </aside>
+            </div>
+
+            <!-- Gift card grid -->
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-display font-semibold text-xl">
+                Sell a gift card
+              </h2>
+              <span class="text-xs text-inksoft font-mono"
+                >19 brands accepted</span
+              >
+            </div>
+
+            <div
+              class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 mb-4"
+              id="giftGrid"
+            ></div>
+          </section>
+
+          <!-- ======================= TRANSACTIONS VIEW ======================= -->
+          <section id="view-transactions" class="view fade-in">
+            <h2 class="font-display font-semibold text-2xl mb-5">
+              Transactions
+            </h2>
+
+            <div
+              class="flex gap-2 mb-10 overflow-x-auto no-scrollbar"
+              role="tablist"
+            >
+              <button
+                class="tab active-tab px-4 py-2 rounded-full text-sm font-semibold border border-ink transition"
+                data-filter="all"
+              >
+                All
+              </button>
+              <button
+                class="tab px-4 py-2 rounded-full text-sm font-semibold border border-line text-inksoft transition"
+                data-filter="pending"
+              >
+                Pending
+              </button>
+              <button
+                class="tab px-4 py-2 rounded-full text-sm font-semibold border border-line text-inksoft transition"
+                data-filter="successful"
+              >
+                Successful
+              </button>
+              <button
+                class="tab px-4 py-2 rounded-full text-sm font-semibold border border-line text-inksoft transition"
+                data-filter="rejected"
+              >
+                Rejected
+              </button>
+            </div>
+
+            <div class="flex flex-col items-center text-center py-16">
+              <i
+                data-lucide="ticket"
+                class="w-[88px] h-[88px] mb-6 opacity-70 text-emerald"
+                style="stroke-width: 1.2"
+              ></i>
+              <p class="font-display font-semibold text-lg mb-1">
+                Nothing here yet
+              </p>
+              <p class="text-sm text-inksoft max-w-xs">
+                Sell your first gift card and it'll show up here as soon as it's
+                submitted.
+              </p>
+              <button
+                class="mt-6 bg-emerald text-paper text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-emeraldDeep transition"
+                data-open-modal="sell"
+              >
+                Sell a gift card
+              </button>
+            </div>
+          </section>
+
+          <!-- ======================= ME VIEW ======================= -->
+          <section id="view-me" class="view fade-in">
+            <h2 class="font-display font-semibold text-2xl mb-6">Me</h2>
+
+            <div class="ticket card-surface border border-line mb-6 max-w-md">
+              <div class="p-5 flex items-center gap-4 flex-1">
+                <div
+                  class="w-14 h-14 rounded-full bg-emerald/10 flex items-center justify-center"
+                >
+                  <i data-lucide="user" class="w-6 h-6 text-emerald"></i>
+                </div>
+                <div>
+                  <p class="font-display font-semibold text-lg">LS12505263</p>
+                  <p class="text-xs text-inksoft font-mono">Verified account</p>
+                </div>
+              </div>
+              <div class="stub w-4 text-line">
+                <span
+                  class="notch notch-top"
+                  style="left: -8px; width: 16px; height: 16px"
+                ></span>
+                <span
+                  class="notch notch-bottom"
+                  style="left: -8px; width: 16px; height: 16px"
+                ></span>
+              </div>
+            </div>
+
+            <ul
+              class="max-w-md divide-y divide-line border border-line rounded-2xl overflow-hidden card-surface"
+            >
+              <li>
+                <button
+                  class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition"
+                >
+                  Bank &amp; payout details
+                </button>
+              </li>
+              <li>
+                <button
+                  class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition"
+                >
+                  Identity verification
+                </button>
+              </li>
+              <li>
+                <button
+                  class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition"
+                >
+                  Notification preferences
+                </button>
+              </li>
+              <li>
+                <button
+                  class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition"
+                >
+                  24/7 support
+                </button>
+              </li>
+              <li>
+                <button
+                  class="w-full text-left px-5 py-4 text-sm font-semibold text-coral hover:bg-coral/5 transition"
+                >
+                  Log out
+                </button>
+              </li>
+            </ul>
+          </section>
+        </main>
+      </div>
     </div>
 
-    <nav class="flex flex-col gap-1 text-sm">
-      <button class="navlink active flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft font-medium hover:bg-paper2 transition" data-view="home" data-tab="sidebar">
-        <span class="navdot w-1.5 h-1.5 rounded-full bg-emerald opacity-0"></span>
-        <i data-lucide="home" class="w-[18px] h-[18px]"></i>
+    <!-- ============ MOBILE BOTTOM TAB BAR ============ -->
+    <nav
+      class="lg:hidden fixed bottom-0 inset-x-0 bg-ink text-paper/70 px-6 py-3 flex justify-between items-center z-40"
+      style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))"
+    >
+      <button
+        class="navlink active flex flex-col items-center gap-1 text-xs font-medium flex-1"
+        data-view="home"
+        data-tab="bottom"
+      >
+        <i data-lucide="home" class="w-5 h-5"></i>
         Home
       </button>
-      <button class="navlink flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft font-medium hover:bg-paper2 transition" data-view="transactions" data-tab="sidebar">
-        <span class="navdot w-1.5 h-1.5 rounded-full bg-emerald opacity-0"></span>
-        <i data-lucide="receipt" class="w-[18px] h-[18px]"></i>
-        Transactions
+      <button
+        class="navlink flex flex-col items-center gap-1 text-xs font-medium flex-1"
+        data-view="transactions"
+        data-tab="bottom"
+      >
+        <i data-lucide="receipt" class="w-5 h-5"></i>
+        Transaction
       </button>
-      <button class="navlink flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft font-medium hover:bg-paper2 transition" data-view="me" data-tab="sidebar">
-        <span class="navdot w-1.5 h-1.5 rounded-full bg-emerald opacity-0"></span>
-        <i data-lucide="user" class="w-[18px] h-[18px]"></i>
+      <button
+        class="navlink flex flex-col items-center gap-1 text-xs font-medium flex-1"
+        data-view="me"
+        data-tab="bottom"
+      >
+        <i data-lucide="user" class="w-5 h-5"></i>
         Me
       </button>
     </nav>
 
-    <div class="mt-auto pt-6 border-t border-line">
-      <button class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-inksoft text-sm font-medium hover:bg-paper2 transition">
-        <i data-lucide="headphones" class="w-[18px] h-[18px]"></i>
-        24/7 Support
-      </button>
-      <p class="text-xs text-inksoft/60 px-3 mt-4">Signed in as LS12505263</p>
-    </div>
-  </aside>
-
-  <!-- ============ MAIN COLUMN ============ -->
-  <div class="flex-1 min-w-0 pb-24 lg:pb-10">
-
-    <!-- Top bar -->
-    <header class="flex items-center justify-between px-5 pt-6 pb-4 lg:px-10 lg:pt-8 max-w-6xl mx-auto w-full">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-paper2 border border-line flex items-center justify-center lg:hidden">
-          <i data-lucide="user" class="w-[18px] h-[18px] text-inksoft"></i>
+    <!-- ============ SELL MODAL ============ -->
+    <dialog
+      id="sellModal"
+      class="w-full max-w-md mx-auto rounded-t-3xl sm:rounded-3xl"
+    >
+      <div class="card-surface p-6 rounded-t-3xl sm:rounded-3xl">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-display font-semibold text-xl">Sell a gift card</h3>
+          <button
+            id="closeSellModal"
+            class="w-8 h-8 rounded-full bg-paper2 flex items-center justify-center"
+            aria-label="Close"
+          >
+            <i data-lucide="x" class="w-[15px] h-[15px] text-ink"></i>
+          </button>
         </div>
-        <div>
-          <p class="text-xs text-inksoft">Welcome back</p>
-          <p class="font-display font-semibold text-lg leading-tight">LS12505263</p>
+
+        <label class="block text-xs font-semibold text-inksoft mb-1.5"
+          >Brand</label
+        >
+        <select
+          id="modalBrand"
+          class="w-full border border-line rounded-xl px-3 py-2.5 mb-4 text-sm font-medium card-surface text-ink focus:border-emerald outline-none"
+        ></select>
+
+        <label class="block text-xs font-semibold text-inksoft mb-1.5"
+          >Card type</label
+        >
+        <div class="segctrl mb-4">
+          <button
+            type="button"
+            class="segbtn seg-active px-3 py-2 rounded-full text-sm font-semibold transition"
+            data-cardtype="ecode"
+          >
+            E-code
+          </button>
+          <button
+            type="button"
+            class="segbtn px-3 py-2 rounded-full text-sm font-semibold text-inksoft transition"
+            data-cardtype="physical"
+          >
+            Physical card
+          </button>
         </div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button class="w-10 h-10 rounded-full card-surface border border-line flex items-center justify-center lg:hidden" aria-label="Support">
-          <i data-lucide="headphones" class="w-[17px] h-[17px] text-ink"></i>
+
+        <!-- E-code fields -->
+        <div id="ecodeFields">
+          <label class="block text-xs font-semibold text-inksoft mb-1.5"
+            >Card code</label
+          >
+          <input
+            id="modalCode"
+            type="text"
+            placeholder="e.g. XXXX-XXXX-XXXX"
+            class="w-full border border-line rounded-xl px-3 py-2.5 mb-4 text-sm font-medium focus:border-emerald outline-none font-mono card-surface text-ink"
+          />
+        </div>
+
+        <!-- Physical card fields -->
+        <div id="physicalFields" class="hidden">
+          <label class="block text-xs font-semibold text-inksoft mb-1.5"
+            >Card image</label
+          >
+          <label
+            id="dropzone"
+            for="modalImage"
+            class="dropzone rounded-xl flex flex-col items-center justify-center text-center px-4 py-6 mb-2 cursor-pointer"
+          >
+            <i data-lucide="camera" class="w-6 h-6 text-inksoft mb-2"></i>
+            <span class="text-sm font-semibold">Upload photo of the card</span>
+            <span class="text-xs text-inksoft mt-1"
+              >Front and back, showing the number and PIN clearly</span
+            >
+            <input
+              id="modalImage"
+              type="file"
+              accept="image/*"
+              multiple
+              class="hidden"
+            />
+          </label>
+          <div id="imagePreviews" class="grid grid-cols-4 gap-2 mb-4"></div>
+        </div>
+
+        <label class="block text-xs font-semibold text-inksoft mb-1.5"
+          >Card value ($)</label
+        >
+        <input
+          id="modalAmount"
+          type="number"
+          min="0"
+          value="100"
+          class="w-full border border-line rounded-xl px-3 py-2.5 mb-4 text-sm font-medium focus:border-emerald outline-none font-mono card-surface text-ink"
+        />
+
+        <div
+          class="flex items-center justify-between bg-paper2 rounded-xl px-4 py-3 mb-5"
+        >
+          <span class="text-sm text-inksoft">You receive</span>
+          <span
+            id="modalPayout"
+            class="font-display font-semibold text-lg text-emerald"
+            >₦0.00</span
+          >
+        </div>
+
+        <button
+          class="w-full bg-emerald text-paper font-semibold py-3 rounded-full hover:bg-emeraldDeep transition"
+        >
+          Continue
         </button>
-        <button class="w-10 h-10 rounded-full card-surface border border-line flex items-center justify-center relative" aria-label="Notifications">
-          <i data-lucide="bell" class="w-[17px] h-[17px] text-ink"></i>
-          <span class="absolute top-1.5 right-2 w-1.5 h-1.5 bg-coral rounded-full"></span>
-        </button>
       </div>
-    </header>
+    </dialog>
 
-    <main class="px-5 lg:px-10 max-w-6xl mx-auto w-full">
+    <script>
+      // ---- Gift card data (rate = ₦ per $1) ----
+      // Note: card marks are brand-neutral monograms by design (see /style-guide.html
+      // "Card marks" section) — no real logos or brand colors are bundled with this
+      // template. Swap in licensed brand art per-brand for a live deployment.
+      const brands = [
+        { name: "Apple & iTunes", rate: 1343.52 },
+        { name: "Razer Gold", rate: 1154.78 },
+        { name: "Steam", rate: 1213.64 },
+        { name: "Google Play", rate: 943.71 },
+        { name: "Sephora", rate: 1075.63 },
+        { name: "AMEX", rate: 202.95 },
+        { name: "Xbox", rate: 1197.4 },
+        { name: "Macy's", rate: 1024.89 },
+        { name: "Amazon", rate: 933.57 },
+        { name: "Target", rate: 1085.78 },
+        { name: "Roblox", rate: 710.32 },
+        { name: "GameStop", rate: 1047.22 },
+        { name: "Paysafecard", rate: 1451.09 },
+        { name: "PlayStation", rate: 913.27 },
+        { name: "Nordstrom", rate: 913.27 },
+        { name: "Foot Locker", rate: 1156.81 },
+        { name: "Vanilla", rate: 202.95 },
+        { name: "Mastercard", rate: 202.95 },
+        { name: "Visa", rate: 202.95 },
+      ];
 
-      <!-- ======================= HOME VIEW ======================= -->
-      <section id="view-home" class="view active fade-in">
+      // ---- Brand-neutral card mark: deterministic color + initial, no trademarks ----
+      const markPalette = [
+        "#2F6F4E",
+        "#C9A227",
+        "#FF6B4A",
+        "#142018",
+        "#5C7566",
+      ];
+      function markColor(name) {
+        let h = 0;
+        for (let i = 0; i < name.length; i++)
+          h = name.charCodeAt(i) + ((h << 5) - h);
+        return markPalette[Math.abs(h) % markPalette.length];
+      }
 
-        <div class="lg:grid lg:grid-cols-3 lg:gap-6">
-          <div class="lg:col-span-2">
+      const grid = document.getElementById("giftGrid");
+      const fmt = (n) =>
+        "₦" +
+        n.toLocaleString("en-NG", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      const initials = (name) =>
+        name
+          .split(/[&\s]+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((w) => w[0])
+          .join("")
+          .toUpperCase();
 
-            <!-- Balance ticket -->
-            <div class="ticket bg-emerald text-paper shadow-[0_10px_30px_-12px_rgba(20,32,24,0.35)] mb-5">
-              <div class="flex-1 p-6">
-                <div class="flex items-center justify-between mb-6">
-                  <p class="text-sm text-paper/75 font-medium">Available balance</p>
-                  <button id="withdrawHistoryBtn" class="text-sm text-paper/90 flex items-center gap-1 hover:text-white transition" data-view-link="transactions">
-                    History
-                    <i data-lucide="chevron-right" class="w-[14px] h-[14px]"></i>
-                  </button>
-                </div>
-                <div class="flex items-end gap-3">
-                  <span id="balanceValue" class="font-display font-semibold text-4xl lg:text-5xl tracking-tight">₦300.00</span>
-                </div>
-                <p class="text-xs text-paper/60 mt-2 font-mono">Ref · LS-12505263-NG</p>
-              </div>
-              <div class="stub stub-left w-16 flex items-center justify-center text-paper">
-                <span class="notch notch-top"></span>
-                <button id="toggleBalance" aria-label="Toggle balance visibility" class="hover:scale-110 transition">
-                  <i data-lucide="eye" id="eyeIcon" class="w-5 h-5"></i>
-                  <i data-lucide="eye-off" id="eyeOffIcon" class="w-5 h-5 hidden"></i>
-                </button>
-                <span class="notch notch-bottom"></span>
-              </div>
-            </div>
-
-            <!-- Quick actions -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-              <button class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition" data-open-modal="bonus">
-                <span class="w-10 h-10 rounded-xl bg-gold/15 flex items-center justify-center">
-                  <i data-lucide="gift" class="w-[19px] h-[19px] text-gold"></i>
-                </span>
-                <span class="text-sm font-semibold">Daily Bonus</span>
-              </button>
-              <button class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition" data-open-modal="withdraw">
-                <span class="w-10 h-10 rounded-xl bg-emerald/10 flex items-center justify-center">
-                  <i data-lucide="arrow-up" class="w-[19px] h-[19px] text-emerald"></i>
-                </span>
-                <span class="text-sm font-semibold">Withdraw</span>
-              </button>
-              <button class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition" data-open-modal="sell">
-                <span class="w-10 h-10 rounded-xl bg-coral/15 flex items-center justify-center">
-                  <i data-lucide="tag" class="w-[19px] h-[19px] text-coral"></i>
-                </span>
-                <span class="text-sm font-semibold">Sell now</span>
-              </button>
-              <button class="quick-action card-surface border border-line rounded-2xl p-4 flex flex-col items-start gap-3 hover:border-emerald hover:-translate-y-0.5 transition" data-open-modal="rewards">
-                <span class="w-10 h-10 rounded-xl bg-ink/5 flex items-center justify-center">
-                  <i data-lucide="handshake" class="w-[19px] h-[19px] text-ink"></i>
-                </span>
-                <span class="text-sm font-semibold leading-tight">Partner Rewards</span>
-              </button>
-            </div>
-
-            <!-- Promo voucher banner -->
-            <div class="ticket bg-gold/10 border border-gold/40 mb-8">
-              <div class="flex-1 p-5 flex items-center justify-between gap-4 flex-wrap">
-                <div>
-                  <p class="text-xs uppercase tracking-wide text-gold font-semibold mb-1">New users · bonus upgraded</p>
-                  <p class="font-display font-semibold text-xl">Up to ₦9,000 welcome bonus</p>
-                  <p class="text-sm text-inksoft mt-1">Cashback upgraded from 3% to 6% on your first sale.</p>
-                </div>
-                <button class="shrink-0 bg-ink text-paper text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-emeraldDeep transition">
-                  Claim now
-                </button>
-              </div>
-              <div class="stub w-4 hidden sm:flex text-gold/40">
-                <span class="notch notch-top" style="left:-8px;width:16px;height:16px;"></span>
-                <span class="notch notch-bottom" style="left:-8px;width:16px;height:16px;"></span>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Rate ticker / desktop side panel -->
-          <aside class="hidden lg:block">
-            <div class="card-surface border border-line rounded-2xl p-5 sticky top-8">
-              <p class="text-xs uppercase tracking-wide text-inksoft font-semibold mb-4">Top rates today</p>
-              <ul class="space-y-3 font-mono text-sm">
-                <li class="flex justify-between"><span>Paysafecard</span><span class="text-emerald">₦1,451.09</span></li>
-                <li class="flex justify-between"><span>Apple &amp; iTunes</span><span class="text-emerald">₦1,343.52</span></li>
-                <li class="flex justify-between"><span>Sephora</span><span class="text-emerald">₦1,075.63</span></li>
-                <li class="flex justify-between"><span>GameStop</span><span class="text-emerald">₦1,047.22</span></li>
-              </ul>
-              <p class="text-xs text-inksoft/60 mt-4 leading-relaxed">Rates shown per $1 face value, updated every 10 minutes.</p>
-            </div>
-          </aside>
-        </div>
-
-        <!-- Gift card grid -->
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="font-display font-semibold text-xl">Sell a gift card</h2>
-          <span class="text-xs text-inksoft font-mono">19 brands accepted</span>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 mb-4" id="giftGrid"></div>
-
-      </section>
-
-      <!-- ======================= TRANSACTIONS VIEW ======================= -->
-      <section id="view-transactions" class="view fade-in">
-        <h2 class="font-display font-semibold text-2xl mb-5">Transactions</h2>
-
-        <div class="flex gap-2 mb-10 overflow-x-auto no-scrollbar" role="tablist">
-          <button class="tab active-tab px-4 py-2 rounded-full text-sm font-semibold border border-ink transition" data-filter="all">All</button>
-          <button class="tab px-4 py-2 rounded-full text-sm font-semibold border border-line text-inksoft transition" data-filter="pending">Pending</button>
-          <button class="tab px-4 py-2 rounded-full text-sm font-semibold border border-line text-inksoft transition" data-filter="successful">Successful</button>
-          <button class="tab px-4 py-2 rounded-full text-sm font-semibold border border-line text-inksoft transition" data-filter="rejected">Rejected</button>
-        </div>
-
-        <div class="flex flex-col items-center text-center py-16">
-          <i data-lucide="ticket" class="w-[88px] h-[88px] mb-6 opacity-70 text-emerald" style="stroke-width:1.2"></i>
-          <p class="font-display font-semibold text-lg mb-1">Nothing here yet</p>
-          <p class="text-sm text-inksoft max-w-xs">Sell your first gift card and it'll show up here as soon as it's submitted.</p>
-          <button class="mt-6 bg-emerald text-paper text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-emeraldDeep transition" data-open-modal="sell">Sell a gift card</button>
-        </div>
-      </section>
-
-      <!-- ======================= ME VIEW ======================= -->
-      <section id="view-me" class="view fade-in">
-        <h2 class="font-display font-semibold text-2xl mb-6">Me</h2>
-
-        <div class="ticket card-surface border border-line mb-6 max-w-md">
-          <div class="p-5 flex items-center gap-4 flex-1">
-            <div class="w-14 h-14 rounded-full bg-emerald/10 flex items-center justify-center">
-              <i data-lucide="user" class="w-6 h-6 text-emerald"></i>
-            </div>
-            <div>
-              <p class="font-display font-semibold text-lg">LS12505263</p>
-              <p class="text-xs text-inksoft font-mono">Verified account</p>
-            </div>
-          </div>
-          <div class="stub w-4 text-line">
-            <span class="notch notch-top" style="left:-8px;width:16px;height:16px;"></span>
-            <span class="notch notch-bottom" style="left:-8px;width:16px;height:16px;"></span>
-          </div>
-        </div>
-
-        <ul class="max-w-md divide-y divide-line border border-line rounded-2xl overflow-hidden card-surface">
-          <li><button class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition">Bank &amp; payout details</button></li>
-          <li><button class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition">Identity verification</button></li>
-          <li><button class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition">Notification preferences</button></li>
-          <li><button class="w-full text-left px-5 py-4 text-sm font-medium hover:bg-paper2 transition">24/7 support</button></li>
-          <li><button class="w-full text-left px-5 py-4 text-sm font-semibold text-coral hover:bg-coral/5 transition">Log out</button></li>
-        </ul>
-      </section>
-
-    </main>
-  </div>
-</div>
-
-<!-- ============ MOBILE BOTTOM TAB BAR ============ -->
-<nav class="lg:hidden fixed bottom-0 inset-x-0 bg-ink text-paper/70 px-6 py-3 flex justify-between items-center z-40" style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
-  <button class="navlink active flex flex-col items-center gap-1 text-xs font-medium flex-1" data-view="home" data-tab="bottom">
-    <i data-lucide="home" class="w-5 h-5"></i>
-    Home
-  </button>
-  <button class="navlink flex flex-col items-center gap-1 text-xs font-medium flex-1" data-view="transactions" data-tab="bottom">
-    <i data-lucide="receipt" class="w-5 h-5"></i>
-    Transaction
-  </button>
-  <button class="navlink flex flex-col items-center gap-1 text-xs font-medium flex-1" data-view="me" data-tab="bottom">
-    <i data-lucide="user" class="w-5 h-5"></i>
-    Me
-  </button>
-</nav>
-
-<!-- ============ SELL MODAL ============ -->
-<dialog id="sellModal" class="w-full max-w-md mx-auto rounded-t-3xl sm:rounded-3xl">
-  <div class="card-surface p-6 rounded-t-3xl sm:rounded-3xl">
-    <div class="flex items-center justify-between mb-5">
-      <h3 class="font-display font-semibold text-xl">Sell a gift card</h3>
-      <button id="closeSellModal" class="w-8 h-8 rounded-full bg-paper2 flex items-center justify-center" aria-label="Close">
-        <i data-lucide="x" class="w-[15px] h-[15px] text-ink"></i>
-      </button>
-    </div>
-
-    <label class="block text-xs font-semibold text-inksoft mb-1.5">Brand</label>
-    <select id="modalBrand" class="w-full border border-line rounded-xl px-3 py-2.5 mb-4 text-sm font-medium bg-white focus:border-emerald outline-none"></select>
-
-    <label class="block text-xs font-semibold text-inksoft mb-1.5">Card value ($)</label>
-    <input id="modalAmount" type="number" min="0" value="100" class="w-full border border-line rounded-xl px-3 py-2.5 mb-4 text-sm font-medium focus:border-emerald outline-none font-mono">
-
-    <div class="flex items-center justify-between bg-paper2 rounded-xl px-4 py-3 mb-5">
-      <span class="text-sm text-inksoft">You receive</span>
-      <span id="modalPayout" class="font-display font-semibold text-lg text-emerald">₦0.00</span>
-    </div>
-
-    <button class="w-full bg-emerald text-paper font-semibold py-3 rounded-full hover:bg-emeraldDeep transition">Continue</button>
-  </div>
-</dialog>
-
-<script>
-  // ---- Gift card data (rate = ₦ per $1) ----
-  const brands = [
-    { name: "Apple & iTunes", rate: 1343.52, color: "#000000", domain: "apple.com" },
-    { name: "Razer Gold", rate: 1154.78, color: "#00FF00", domain: "razer.com" },
-    { name: "Steam", rate: 1213.64, color: "#1B2838", domain: "steampowered.com" },
-    { name: "Google Play", rate: 943.71, color: "#34A853", domain: "play.google.com" },
-    { name: "Sephora", rate: 1075.63, color: "#000000", domain: "sephora.com" },
-    { name: "AMEX", rate: 202.95, color: "#2E77BC", domain: "americanexpress.com" },
-    { name: "Xbox", rate: 1197.40, color: "#107C10", domain: "xbox.com" },
-    { name: "Macy's", rate: 1024.89, color: "#E21836", domain: "macys.com" },
-    { name: "Amazon", rate: 933.57, color: "#FF9900", domain: "amazon.com" },
-    { name: "Target", rate: 1085.78, color: "#CC0000", domain: "target.com" },
-    { name: "Roblox", rate: 710.32, color: "#E2231A", domain: "roblox.com" },
-    { name: "GameStop", rate: 1047.22, color: "#000000", domain: "gamestop.com" },
-    { name: "Paysafecard", rate: 1451.09, color: "#0072CE", domain: "paysafecard.com" },
-    { name: "PlayStation", rate: 913.27, color: "#003791", domain: "playstation.com" },
-    { name: "Nordstrom", rate: 913.27, color: "#000000", domain: "nordstrom.com" },
-    { name: "Foot Locker", rate: 1156.81, color: "#EE1C25", domain: "footlocker.com" },
-    { name: "Vanilla", rate: 202.95, color: "#555555", domain: "vanillagift.com" },
-    { name: "Mastercard", rate: 202.95, color: "#EB001B", domain: "mastercard.com" },
-    { name: "Visa", rate: 202.95, color: "#1A1F71", domain: "visa.com" },
-  ];
-
-  const grid = document.getElementById('giftGrid');
-  const fmt = n => '₦' + n.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const initials = name => name.split(/[&\s]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
-
-  brands.forEach(b => {
-    const tile = document.createElement('button');
-    tile.className = "ticket card-surface border border-line text-left hover:border-emerald hover:-translate-y-0.5 transition";
-    tile.dataset.brand = b.name;
-    const favicon = `https://www.google.com/s2/favicons?domain=${b.domain}&sz=128`;
-    tile.innerHTML = `
+      brands.forEach((b) => {
+        const tile = document.createElement("button");
+        tile.className =
+          "ticket card-surface border border-line text-left hover:border-emerald hover:-translate-y-0.5 transition";
+        tile.dataset.brand = b.name;
+        tile.innerHTML = `
       <div class="flex-1 p-4 min-w-0">
-        <div class="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center mb-3" style="background:${b.color}">
-          <img src="${favicon}" alt="${b.name} logo" class="w-full h-full object-cover"
-               onerror="this.replaceWith(Object.assign(document.createElement('span'), {className:'font-display font-semibold text-sm text-white', textContent:'${initials(b.name)}'}))">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center font-display font-semibold text-sm text-white mb-3" style="background:${markColor(b.name)}">
+          ${initials(b.name)}
         </div>
         <p class="text-sm font-semibold truncate">${b.name}</p>
         <p class="text-xs font-mono text-emerald mt-0.5">${fmt(b.rate)}<span class="text-inksoft">/$</span></p>
@@ -425,83 +916,172 @@
         <span class="tile-notch"></span>
       </div>
     `;
-    tile.addEventListener('click', () => openSellModal(b.name));
-    grid.appendChild(tile);
-  });
-
-  // ---- View switching ----
-  function setView(name) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + name).classList.add('active');
-    document.querySelectorAll('.navlink').forEach(l => l.classList.toggle('active', l.dataset.view === name));
-    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
-  }
-  document.querySelectorAll('[data-view]').forEach(el => {
-    el.addEventListener('click', () => setView(el.dataset.view));
-  });
-  document.querySelectorAll('[data-view-link]').forEach(el => {
-    el.addEventListener('click', () => setView(el.dataset.viewLink));
-  });
-
-  // ---- Transaction filter tabs (visual only — list is empty) ----
-  document.querySelectorAll('.tab').forEach(t => {
-    t.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(x => {
-        x.classList.remove('active-tab', 'border-ink');
-        x.classList.add('border-line', 'text-inksoft');
+        tile.addEventListener("click", () => openSellModal(b.name));
+        grid.appendChild(tile);
       });
-      t.classList.add('active-tab', 'border-ink');
-      t.classList.remove('border-line', 'text-inksoft');
-    });
-  });
 
-  // ---- Balance visibility toggle ----
-  let visible = true;
-  const balanceEl = document.getElementById('balanceValue');
-  const eyeIcon = document.getElementById('eyeIcon');
-  const eyeOffIcon = document.getElementById('eyeOffIcon');
-  document.getElementById('toggleBalance').addEventListener('click', () => {
-    visible = !visible;
-    balanceEl.classList.toggle('blur-balance', !visible);
-    eyeIcon.classList.toggle('hidden', !visible);
-    eyeOffIcon.classList.toggle('hidden', visible);
-  });
+      // ---- View switching ----
+      function setView(name) {
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("active"));
+        document.getElementById("view-" + name).classList.add("active");
+        document
+          .querySelectorAll(".navlink")
+          .forEach((l) =>
+            l.classList.toggle("active", l.dataset.view === name),
+          );
+        window.scrollTo({
+          top: 0,
+          behavior: "instant" in window ? "instant" : "auto",
+        });
+      }
+      document.querySelectorAll("[data-view]").forEach((el) => {
+        el.addEventListener("click", () => setView(el.dataset.view));
+      });
+      document.querySelectorAll("[data-view-link]").forEach((el) => {
+        el.addEventListener("click", () => setView(el.dataset.viewLink));
+      });
 
-  // ---- Sell modal ----
-  const sellModal = document.getElementById('sellModal');
-  const modalBrand = document.getElementById('modalBrand');
-  const modalAmount = document.getElementById('modalAmount');
-  const modalPayout = document.getElementById('modalPayout');
+      // ---- Transaction filter tabs (visual only — list is empty) ----
+      document.querySelectorAll(".tab").forEach((t) => {
+        t.addEventListener("click", () => {
+          document.querySelectorAll(".tab").forEach((x) => {
+            x.classList.remove("active-tab", "border-ink");
+            x.classList.add("border-line", "text-inksoft");
+          });
+          t.classList.add("active-tab", "border-ink");
+          t.classList.remove("border-line", "text-inksoft");
+        });
+      });
 
-  brands.forEach(b => {
-    const opt = document.createElement('option');
-    opt.value = b.name; opt.textContent = b.name;
-    modalBrand.appendChild(opt);
-  });
+      // ---- Balance visibility toggle ----
+      let visible = true;
+      const balanceEl = document.getElementById("balanceValue");
+      const eyeIcon = document.getElementById("eyeIcon");
+      const eyeOffIcon = document.getElementById("eyeOffIcon");
+      document.getElementById("toggleBalance").addEventListener("click", () => {
+        visible = !visible;
+        balanceEl.classList.toggle("blur-balance", !visible);
+        eyeIcon.classList.toggle("hidden", !visible);
+        eyeOffIcon.classList.toggle("hidden", visible);
+      });
 
-  function recalc() {
-    const b = brands.find(x => x.name === modalBrand.value) || brands[0];
-    const amt = parseFloat(modalAmount.value) || 0;
-    modalPayout.textContent = fmt(b.rate * amt);
-  }
-  modalBrand.addEventListener('change', recalc);
-  modalAmount.addEventListener('input', recalc);
+      // ---- Sell modal ----
+      const sellModal = document.getElementById("sellModal");
+      const modalBrand = document.getElementById("modalBrand");
+      const modalAmount = document.getElementById("modalAmount");
+      const modalPayout = document.getElementById("modalPayout");
 
-  function openSellModal(brandName) {
-    if (brandName) modalBrand.value = brandName;
-    recalc();
-    sellModal.showModal();
-  }
-  document.querySelectorAll('[data-open-modal="sell"]').forEach(el => el.addEventListener('click', () => openSellModal()));
-  document.getElementById('closeSellModal').addEventListener('click', () => sellModal.close());
-  sellModal.addEventListener('click', e => { if (e.target === sellModal) sellModal.close(); });
+      brands.forEach((b) => {
+        const opt = document.createElement("option");
+        opt.value = b.name;
+        opt.textContent = b.name;
+        modalBrand.appendChild(opt);
+      });
 
-  // ---- Render Lucide icons (script is deferred, so DOM is ready by the time it runs) ----
-  document.addEventListener('DOMContentLoaded', () => {
-    if (window.lucide) lucide.createIcons();
-  });
-  // Fallback in case DOMContentLoaded already fired before this ran
-  if (document.readyState !== 'loading' && window.lucide) lucide.createIcons();
-</script>
-</body>
+      function recalc() {
+        const b = brands.find((x) => x.name === modalBrand.value) || brands[0];
+        const amt = parseFloat(modalAmount.value) || 0;
+        modalPayout.textContent = fmt(b.rate * amt);
+      }
+      modalBrand.addEventListener("change", recalc);
+      modalAmount.addEventListener("input", recalc);
+
+      // ---- Card type: e-code vs physical ----
+      const ecodeFields = document.getElementById("ecodeFields");
+      const physicalFields = document.getElementById("physicalFields");
+      document.querySelectorAll("[data-cardtype]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("[data-cardtype]").forEach((b) => {
+            b.classList.remove("seg-active");
+            b.classList.add("text-inksoft");
+          });
+          btn.classList.add("seg-active");
+          btn.classList.remove("text-inksoft");
+          const isPhysical = btn.dataset.cardtype === "physical";
+          ecodeFields.classList.toggle("hidden", isPhysical);
+          physicalFields.classList.toggle("hidden", !isPhysical);
+        });
+      });
+
+      // ---- Physical card image upload + preview (client-side only) ----
+      const modalImage = document.getElementById("modalImage");
+      const imagePreviews = document.getElementById("imagePreviews");
+      const dropzone = document.getElementById("dropzone");
+
+      function renderPreviews(files) {
+        imagePreviews.innerHTML = "";
+        Array.from(files)
+          .slice(0, 4)
+          .forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = document.createElement("img");
+              img.src = e.target.result;
+              img.className =
+                "w-full aspect-square object-cover rounded-lg border border-line";
+              imagePreviews.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          });
+      }
+      modalImage.addEventListener("change", () =>
+        renderPreviews(modalImage.files),
+      );
+      ["dragover", "dragleave", "drop"].forEach((evt) => {
+        dropzone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          dropzone.classList.toggle("drag-over", evt === "dragover");
+          if (evt === "drop" && e.dataTransfer.files.length) {
+            modalImage.files = e.dataTransfer.files;
+            renderPreviews(e.dataTransfer.files);
+          }
+        });
+      });
+
+      function openSellModal(brandName) {
+        if (brandName) modalBrand.value = brandName;
+        recalc();
+        sellModal.showModal();
+      }
+      document
+        .querySelectorAll('[data-open-modal="sell"]')
+        .forEach((el) => el.addEventListener("click", () => openSellModal()));
+      document
+        .getElementById("closeSellModal")
+        .addEventListener("click", () => sellModal.close());
+      sellModal.addEventListener("click", (e) => {
+        if (e.target === sellModal) sellModal.close();
+      });
+
+      // ---- Dark mode toggle ----
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const iconMoon = document.getElementById("iconMoon");
+      const iconSun = document.getElementById("iconSun");
+      function applyTheme(isDark) {
+        root.classList.toggle("dark", isDark);
+        iconMoon.classList.toggle("hidden", isDark);
+        iconSun.classList.toggle("hidden", !isDark);
+        localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
+      }
+      const savedTheme = localStorage.getItem("cardmax-theme");
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      applyTheme(savedTheme ? savedTheme === "dark" : prefersDark);
+      themeToggle.addEventListener("click", () =>
+        applyTheme(!root.classList.contains("dark")),
+      );
+
+      // ---- Render Lucide icons (script is deferred, so DOM is ready by the time it runs) ----
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      // Fallback in case DOMContentLoaded already fired before this ran
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
 </html>

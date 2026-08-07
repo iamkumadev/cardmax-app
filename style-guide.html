@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CardMax — Design System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+    <script>
+      tailwind.config = { darkMode: "class" };
+    </script>
+    <style>
+      /* ============================================================
+     CARDMAX DESIGN TOKENS
+     Semantic CSS variables — this is the single source of truth.
+     Every screen in the template should theme off these, not
+     off raw hex values, so dark mode and future skins are a
+     one-file change.
+     ============================================================ */
+      :root {
+        /* --- Color: surfaces --- */
+        --paper: #eef1ec; /* page background */
+        --surface: #ffffff; /* card / raised surface */
+        --surface-2: #e4e9e1; /* recessed surface, hover fill */
+        --line: #c6d0c2; /* borders, dividers, perforation */
+
+        /* --- Color: text --- */
+        --ink: #142018; /* primary text */
+        --ink-soft: #4b564e; /* secondary text */
+        --ink-faint: #8a968c; /* tertiary / placeholder text */
+
+        /* --- Color: brand --- */
+        --emerald: #2f6f4e;
+        --emerald-deep: #1f4f37;
+        --emerald-tint: #e4efe8;
+        --gold: #c9a227;
+        --gold-tint: #f6efd9;
+        --coral: #ff6b4a;
+        --coral-tint: #ffe9e3;
+
+        /* --- Elevation --- */
+        --shadow-sm: 0 1px 2px rgba(20, 32, 24, 0.06);
+        --shadow-md: 0 8px 20px -8px rgba(20, 32, 24, 0.18);
+        --shadow-lg: 0 24px 48px -16px rgba(20, 32, 24, 0.28);
+
+        /* --- Motion --- */
+        --dur-fast: 120ms;
+        --dur-base: 200ms;
+        --dur-slow: 320ms;
+        --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+        --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      html.dark {
+        --paper: #0f1913;
+        --surface: #16221a;
+        --surface-2: #1c2a21;
+        --line: #2a3a2f;
+
+        --ink: #edf2ea;
+        --ink-soft: #9faf9c;
+        --ink-faint: #5c6b60;
+
+        --emerald: #4fa179;
+        --emerald-deep: #6bbe94;
+        --emerald-tint: #1b3327;
+        --gold: #d9b646;
+        --gold-tint: #2e2a16;
+        --coral: #ff8064;
+        --coral-tint: #3a211c;
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 24px 56px -16px rgba(0, 0, 0, 0.6);
+      }
+
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        transition: background var(--dur-base) var(--ease-standard);
+      }
+
+      .font-display {
+        font-family: "Fraunces", serif;
+      }
+      .font-ui {
+        font-family: "Space Grotesk", sans-serif;
+      }
+      .font-mono {
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      /* ---- Semantic surface/text utility classes (portable to PHP templates later) ---- */
+      .bg-paper {
+        background: var(--paper);
+      }
+      .bg-surface {
+        background: var(--surface);
+      }
+      .bg-surface-2 {
+        background: var(--surface-2);
+      }
+      .text-ink {
+        color: var(--ink);
+      }
+      .text-ink-soft {
+        color: var(--ink-soft);
+      }
+      .text-ink-faint {
+        color: var(--ink-faint);
+      }
+      .border-line {
+        border-color: var(--line);
+      }
+      .text-emerald {
+        color: var(--emerald);
+      }
+      .bg-emerald {
+        background: var(--emerald);
+      }
+      .bg-emerald-tint {
+        background: var(--emerald-tint);
+      }
+      .text-gold {
+        color: var(--gold);
+      }
+      .bg-gold-tint {
+        background: var(--gold-tint);
+      }
+      .text-coral {
+        color: var(--coral);
+      }
+      .bg-coral-tint {
+        background: var(--coral-tint);
+      }
+      .shadow-token-sm {
+        box-shadow: var(--shadow-sm);
+      }
+      .shadow-token-md {
+        box-shadow: var(--shadow-md);
+      }
+      .shadow-token-lg {
+        box-shadow: var(--shadow-lg);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--line);
+        border-radius: 999px;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--emerald);
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      /* ---- Ticket / voucher signature (shared across template) ---- */
+      .ticket {
+        position: relative;
+        display: flex;
+        border-radius: 20px;
+      }
+      .ticket .stub {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .ticket .stub::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 2px dashed currentColor;
+        opacity: 0.35;
+      }
+      .notch {
+        position: absolute;
+        left: -12px;
+        width: 24px;
+        height: 24px;
+        background: var(--paper);
+        border-radius: 999px;
+      }
+      .notch-top {
+        top: -12px;
+      }
+      .notch-bottom {
+        bottom: -12px;
+      }
+      .swatch {
+        border-radius: 16px;
+        border: 1px solid var(--line);
+      }
+
+      section.dsblock {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+        border-top: 1px solid var(--line);
+      }
+      section.dsblock:first-of-type {
+        border-top: none;
+      }
+
+      .eyebrow {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--emerald);
+      }
+    </style>
+  </head>
+  <body class="font-ui antialiased">
+    <!-- Theme toggle -->
+    <div class="fixed top-5 right-5 z-50">
+      <button
+        id="themeToggle"
+        class="w-11 h-11 rounded-full bg-surface border border-line shadow-token-md flex items-center justify-center"
+        aria-label="Toggle dark mode"
+      >
+        <i
+          data-lucide="moon"
+          id="iconMoon"
+          class="w-[18px] h-[18px] text-ink"
+        ></i>
+        <i
+          data-lucide="sun"
+          id="iconSun"
+          class="w-[18px] h-[18px] text-ink hidden"
+        ></i>
+      </button>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-6 lg:px-10">
+      <!-- ============ HERO / THESIS ============ -->
+      <header class="pt-20 pb-16">
+        <p class="eyebrow mb-4">CardMax · Design System</p>
+        <h1
+          class="font-display font-semibold text-4xl md:text-6xl leading-[1.05] tracking-tight max-w-3xl"
+        >
+          Every gift card is a voucher.<br />The UI is built like one.
+        </h1>
+        <p class="text-ink-soft text-lg max-w-xl mt-6 leading-relaxed">
+          A single component — the die-cut ticket stub — carries the idea that a
+          gift card is something you tear off and redeem for cash. Everything
+          below is the token set and component library that idea is built from.
+        </p>
+      </header>
+
+      <!-- ============ COLOR ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">01 · Color</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          Six roles, light and dark
+        </h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+          <div>
+            <div class="swatch h-20 bg-paper mb-2"></div>
+            <p class="text-sm font-semibold">Paper</p>
+            <p class="text-xs font-mono text-ink-faint">
+              --paper · page background
+            </p>
+          </div>
+          <div>
+            <div class="swatch h-20 bg-surface mb-2"></div>
+            <p class="text-sm font-semibold">Surface</p>
+            <p class="text-xs font-mono text-ink-faint">--surface · cards</p>
+          </div>
+          <div>
+            <div class="swatch h-20 mb-2" style="background: var(--ink)"></div>
+            <p class="text-sm font-semibold">Ink</p>
+            <p class="text-xs font-mono text-ink-faint">--ink · primary text</p>
+          </div>
+          <div>
+            <div
+              class="swatch h-20 mb-2"
+              style="background: var(--emerald)"
+            ></div>
+            <p class="text-sm font-semibold">Emerald</p>
+            <p class="text-xs font-mono text-ink-faint">
+              --emerald · primary action
+            </p>
+          </div>
+          <div>
+            <div class="swatch h-20 mb-2" style="background: var(--gold)"></div>
+            <p class="text-sm font-semibold">Gold</p>
+            <p class="text-xs font-mono text-ink-faint">
+              --gold · reward, bonus
+            </p>
+          </div>
+          <div>
+            <div
+              class="swatch h-20 mb-2"
+              style="background: var(--coral)"
+            ></div>
+            <p class="text-sm font-semibold">Coral</p>
+            <p class="text-xs font-mono text-ink-faint">
+              --coral · attention, errors
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="bg-surface-2 rounded-2xl p-5 text-sm text-ink-soft leading-relaxed"
+        >
+          <strong class="text-ink">Usage rule:</strong> Emerald is the only
+          color allowed on primary actions (buttons, active nav, links). Gold is
+          reserved for reward/bonus moments — never a button. Coral is reserved
+          for errors and destructive actions — never decorative. This restraint
+          is what keeps the palette from feeling arbitrary.
+        </div>
+      </section>
+
+      <!-- ============ TYPOGRAPHY ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">02 · Typography</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          Three roles, one scale each
+        </h2>
+
+        <div class="space-y-6 mb-10">
+          <div class="flex items-baseline gap-6 flex-wrap">
+            <span
+              class="font-display font-semibold"
+              style="font-size: 3.5rem; line-height: 1.05"
+              >Aa</span
+            >
+            <div>
+              <p class="text-sm font-semibold">Fraunces — Display</p>
+              <p class="text-xs font-mono text-ink-faint">
+                Balance figures, hero type, section headers. Used sparingly —
+                it's the "voice," not the workhorse.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-6 flex-wrap">
+            <span class="font-ui font-semibold" style="font-size: 2rem"
+              >Aa</span
+            >
+            <div>
+              <p class="text-sm font-semibold">Space Grotesk — UI</p>
+              <p class="text-xs font-mono text-ink-faint">
+                Nav, buttons, body copy, labels. The workhorse face — everything
+                a user reads to operate the product.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-6 flex-wrap">
+            <span class="font-mono font-medium" style="font-size: 1.5rem"
+              >Aa 1,343.52</span
+            >
+            <div>
+              <p class="text-sm font-semibold">IBM Plex Mono — Data</p>
+              <p class="text-xs font-mono text-ink-faint">
+                Rates, reference codes, timestamps. Anything that reads as
+                "system output" rather than prose.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-x-10 gap-y-4 text-sm font-mono">
+          <div class="flex justify-between border-b border-line py-2">
+            <span>display-2xl</span
+            ><span class="text-ink-faint">56 / 1.05</span>
+          </div>
+          <div class="flex justify-between border-b border-line py-2">
+            <span>display-xl</span><span class="text-ink-faint">40 / 1.1</span>
+          </div>
+          <div class="flex justify-between border-b border-line py-2">
+            <span>display-lg</span><span class="text-ink-faint">32 / 1.15</span>
+          </div>
+          <div class="flex justify-between border-b border-line py-2">
+            <span>display-md</span><span class="text-ink-faint">24 / 1.25</span>
+          </div>
+          <div class="flex justify-between border-b border-line py-2">
+            <span>body-lg</span><span class="text-ink-faint">18 / 1.6</span>
+          </div>
+          <div class="flex justify-between border-b border-line py-2">
+            <span>body-md</span
+            ><span class="text-ink-faint">16 / 1.6 (base)</span>
+          </div>
+          <div class="flex justify-between border-b border-line py-2">
+            <span>body-sm</span><span class="text-ink-faint">14 / 1.5</span>
+          </div>
+          <div class="flex justify-between border-b border-line py-2">
+            <span>mono-sm</span><span class="text-ink-faint">13 / 1.5</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SPACING & RADII ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">03 · Spacing & radius</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          4px base, four corner sizes
+        </h2>
+
+        <div class="flex flex-wrap items-end gap-3 mb-10">
+          <div class="bg-emerald" style="width: 4px; height: 4px"></div>
+          <div class="bg-emerald" style="width: 8px; height: 8px"></div>
+          <div class="bg-emerald" style="width: 12px; height: 12px"></div>
+          <div class="bg-emerald" style="width: 16px; height: 16px"></div>
+          <div class="bg-emerald" style="width: 24px; height: 24px"></div>
+          <div class="bg-emerald" style="width: 32px; height: 32px"></div>
+          <div class="bg-emerald" style="width: 48px; height: 48px"></div>
+          <div class="bg-emerald" style="width: 64px; height: 64px"></div>
+          <p class="text-xs font-mono text-ink-faint ml-2">
+            4 · 8 · 12 · 16 · 24 · 32 · 48 · 64
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="text-center">
+            <div
+              class="bg-surface-2 h-20 mb-2"
+              style="border-radius: 8px"
+            ></div>
+            <p class="text-xs font-mono text-ink-faint">sm · 8px</p>
+          </div>
+          <div class="text-center">
+            <div
+              class="bg-surface-2 h-20 mb-2"
+              style="border-radius: 14px"
+            ></div>
+            <p class="text-xs font-mono text-ink-faint">md · 14px</p>
+          </div>
+          <div class="text-center">
+            <div
+              class="bg-surface-2 h-20 mb-2"
+              style="border-radius: 20px"
+            ></div>
+            <p class="text-xs font-mono text-ink-faint">lg · 20px (cards)</p>
+          </div>
+          <div class="text-center">
+            <div
+              class="bg-surface-2 h-20 mb-2"
+              style="border-radius: 999px"
+            ></div>
+            <p class="text-xs font-mono text-ink-faint">full · pills</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CARD MARKS ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">04 · Card marks</p>
+        <h2 class="font-display font-semibold text-2xl mb-3">
+          Brand-neutral by design
+        </h2>
+        <p class="text-ink-soft max-w-xl mb-8 leading-relaxed">
+          Gift-card tiles never use real logos out of the box — this is a
+          template, not a licensed asset pack. Instead each brand gets a
+          monogram mark: an initial on a color drawn from the palette below,
+          assigned deterministically by brand name. Replace with real artwork
+          per-brand when you deploy for a specific store.
+        </p>
+
+        <div class="grid grid-cols-3 sm:grid-cols-6 gap-3" id="markDemo"></div>
+      </section>
+
+      <!-- ============ BUTTONS ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">05 · Buttons</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          Three weights, every state
+        </h2>
+
+        <div class="flex flex-wrap gap-3 mb-6">
+          <button
+            class="px-5 py-2.5 rounded-full font-semibold text-sm text-white transition"
+            style="background: var(--emerald)"
+          >
+            Primary
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-full font-semibold text-sm transition"
+            style="background: var(--surface-2); color: var(--ink)"
+          >
+            Secondary
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-full font-semibold text-sm border transition"
+            style="border-color: var(--line); color: var(--ink)"
+          >
+            Outline
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-full font-semibold text-sm transition"
+            style="color: var(--emerald)"
+          >
+            Ghost
+          </button>
+          <button
+            class="px-5 py-2.5 rounded-full font-semibold text-sm text-white opacity-40 cursor-not-allowed"
+            style="background: var(--emerald)"
+          >
+            Disabled
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <button
+            class="px-6 py-3 rounded-full font-semibold text-base text-white"
+            style="background: var(--emerald)"
+          >
+            Large
+          </button>
+          <button
+            class="px-4 py-2 rounded-full font-semibold text-sm text-white"
+            style="background: var(--emerald)"
+          >
+            Default
+          </button>
+          <button
+            class="px-3 py-1.5 rounded-full font-semibold text-xs text-white"
+            style="background: var(--emerald)"
+          >
+            Small
+          </button>
+        </div>
+      </section>
+
+      <!-- ============ FORM INPUTS ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">06 · Form fields</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          Default, focus, error, success
+        </h2>
+
+        <div class="grid sm:grid-cols-2 gap-4 max-w-2xl">
+          <div>
+            <label class="block text-xs font-semibold text-ink-soft mb-1.5"
+              >Default</label
+            >
+            <input
+              class="w-full border rounded-xl px-3 py-2.5 text-sm bg-surface"
+              style="border-color: var(--line)"
+              placeholder="Card amount"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-ink-soft mb-1.5"
+              >Focused</label
+            >
+            <input
+              class="w-full border-2 rounded-xl px-3 py-2.5 text-sm bg-surface"
+              style="border-color: var(--emerald)"
+              placeholder="Card amount"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-xs font-semibold mb-1.5"
+              style="color: var(--coral)"
+              >Error</label
+            >
+            <input
+              class="w-full border-2 rounded-xl px-3 py-2.5 text-sm bg-surface"
+              style="border-color: var(--coral)"
+              value="12abc"
+            />
+            <p class="text-xs mt-1" style="color: var(--coral)">
+              Enter a valid amount.
+            </p>
+          </div>
+          <div>
+            <label
+              class="block text-xs font-semibold mb-1.5"
+              style="color: var(--emerald)"
+              >Success</label
+            >
+            <input
+              class="w-full border-2 rounded-xl px-3 py-2.5 text-sm bg-surface"
+              style="border-color: var(--emerald)"
+              value="100"
+            />
+            <p class="text-xs mt-1" style="color: var(--emerald)">
+              Card verified.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BADGES ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">07 · Badges</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          Status, always by meaning not decoration
+        </h2>
+
+        <div class="flex flex-wrap gap-3">
+          <span
+            class="px-3 py-1 rounded-full text-xs font-semibold"
+            style="background: var(--emerald-tint); color: var(--emerald)"
+            >Successful</span
+          >
+          <span
+            class="px-3 py-1 rounded-full text-xs font-semibold"
+            style="background: var(--gold-tint); color: var(--gold)"
+            >Pending</span
+          >
+          <span
+            class="px-3 py-1 rounded-full text-xs font-semibold"
+            style="background: var(--coral-tint); color: var(--coral)"
+            >Rejected</span
+          >
+          <span
+            class="px-3 py-1 rounded-full text-xs font-semibold bg-surface-2 text-ink-soft"
+            >Draft</span
+          >
+        </div>
+      </section>
+
+      <!-- ============ TICKET COMPONENT ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">08 · Ticket component</p>
+        <h2 class="font-display font-semibold text-2xl mb-3">
+          The signature element
+        </h2>
+        <p class="text-ink-soft max-w-xl mb-8 leading-relaxed">
+          Every ticket has a body and a stub, separated by a dashed perforation
+          with die-cut notches. The stub always holds the single most important
+          action or status for that card — never decoration.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-5">
+          <div class="ticket text-white" style="background: var(--emerald)">
+            <div class="flex-1 p-5">
+              <p class="text-xs opacity-75 mb-2">Balance variant</p>
+              <p class="font-display font-semibold text-2xl">₦300.00</p>
+            </div>
+            <div class="stub w-14 flex items-center justify-center">
+              <span class="notch notch-top"></span>
+              <i data-lucide="eye" class="w-4 h-4"></i>
+              <span class="notch notch-bottom"></span>
+            </div>
+          </div>
+
+          <div
+            class="ticket bg-surface border"
+            style="border-color: var(--line)"
+          >
+            <div class="flex-1 p-5">
+              <p class="text-xs text-ink-faint mb-2">Tile variant</p>
+              <p class="font-semibold">Steam</p>
+              <p class="text-xs font-mono text-emerald">₦1,213.64/$</p>
+            </div>
+            <div class="stub w-4 text-line">
+              <span
+                class="notch"
+                style="
+                  left: -8px;
+                  width: 16px;
+                  height: 16px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                "
+              ></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ EMPTY & LOADING ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">09 · Empty & loading states</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          Direction, not decoration
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-5">
+          <div
+            class="border rounded-2xl p-8 text-center"
+            style="border-color: var(--line)"
+          >
+            <i
+              data-lucide="ticket"
+              class="w-12 h-12 mx-auto mb-4 text-emerald opacity-70"
+            ></i>
+            <p class="font-display font-semibold mb-1">Nothing here yet</p>
+            <p class="text-sm text-ink-soft">
+              Sell your first gift card and it'll show up here.
+            </p>
+          </div>
+          <div class="border rounded-2xl p-8" style="border-color: var(--line)">
+            <div class="animate-pulse space-y-3">
+              <div class="h-4 rounded bg-surface-2 w-1/3"></div>
+              <div class="h-8 rounded bg-surface-2 w-2/3"></div>
+              <div class="h-4 rounded bg-surface-2 w-full"></div>
+              <div class="h-4 rounded bg-surface-2 w-5/6"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ NOTIFICATIONS ============ -->
+      <section class="dsblock">
+        <p class="eyebrow mb-2">10 · Toasts</p>
+        <h2 class="font-display font-semibold text-2xl mb-8">
+          Same voice as the action taken
+        </h2>
+
+        <div class="space-y-3 max-w-md">
+          <div
+            class="flex items-center gap-3 p-4 rounded-xl"
+            style="background: var(--emerald-tint)"
+          >
+            <i
+              data-lucide="check-circle"
+              class="w-5 h-5"
+              style="color: var(--emerald)"
+            ></i>
+            <p class="text-sm font-medium">
+              Card sold — ₦121,364 sent to your balance.
+            </p>
+          </div>
+          <div
+            class="flex items-center gap-3 p-4 rounded-xl"
+            style="background: var(--coral-tint)"
+          >
+            <i
+              data-lucide="alert-circle"
+              class="w-5 h-5"
+              style="color: var(--coral)"
+            ></i>
+            <p class="text-sm font-medium">
+              Card code invalid — check the number and try again.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="py-16 text-center">
+        <p class="text-xs font-mono text-ink-faint">
+          CardMax Design System · built on Fraunces, Space Grotesk, IBM Plex
+          Mono, and Lucide
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      // ---- Theme toggle ----
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const iconMoon = document.getElementById("iconMoon");
+      const iconSun = document.getElementById("iconSun");
+
+      function applyTheme(isDark) {
+        root.classList.toggle("dark", isDark);
+        iconMoon.classList.toggle("hidden", isDark);
+        iconSun.classList.toggle("hidden", !isDark);
+      }
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      applyTheme(prefersDark);
+      themeToggle.addEventListener("click", () =>
+        applyTheme(!root.classList.contains("dark")),
+      );
+
+      // ---- Card mark demo (deterministic monogram system) ----
+      const markPalette = [
+        "#2F6F4E",
+        "#C9A227",
+        "#FF6B4A",
+        "#142018",
+        "#5C7566",
+      ];
+      const demoBrands = [
+        "Steam",
+        "Amazon",
+        "Apple",
+        "Roblox",
+        "Target",
+        "Xbox",
+      ];
+      function hashHue(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++)
+          h = str.charCodeAt(i) + ((h << 5) - h);
+        return Math.abs(h) % markPalette.length;
+      }
+      const markDemo = document.getElementById("markDemo");
+      demoBrands.forEach((name) => {
+        const color = markPalette[hashHue(name)];
+        const el = document.createElement("div");
+        el.className =
+          "aspect-square rounded-2xl flex items-center justify-center font-display font-semibold text-white text-xl";
+        el.style.background = color;
+        el.textContent = name[0];
+        el.title = name;
+        markDemo.appendChild(el);
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
+</html>
