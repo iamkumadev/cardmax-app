@@ -340,7 +340,10 @@
               "brand-pick card-surface border border-line rounded-2xl p-3 flex flex-col items-center gap-2 hover:border-emerald transition";
             el.dataset.brand = b.name;
             el.innerHTML = `
-        <span class="w-10 h-10 rounded-lg flex items-center justify-center font-display font-semibold text-white text-sm" style="background:${markColor(b.name)}">${initials(b.name)}</span>
+        <span class="relative w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center font-display font-semibold text-white text-sm" style="background:${markColor(b.name)}">
+          ${initials(b.name)}
+          <img src="images/cards/${slugify(b.name)}.png" alt="${b.name}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">
+        </span>
         <span class="text-xs font-semibold text-center leading-tight">${b.name}</span>
       `;
             el.addEventListener("click", () => selectBrand(b.name));
@@ -374,8 +377,10 @@
         const b = brands.find((x) => x.name === state.brand);
         document.getElementById("selectedBrandName").textContent = b.name;
         const mark = document.getElementById("selectedMark");
-        mark.textContent = initials(b.name);
         mark.style.background = markColor(b.name);
+        mark.style.position = "relative";
+        mark.style.overflow = "hidden";
+        mark.innerHTML = `${initials(b.name)}<img src="images/cards/${slugify(b.name)}.png" alt="${b.name}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">`;
         recalcPayout();
       }
       function recalcPayout() {
@@ -454,8 +459,10 @@
         document.getElementById("reviewType").textContent =
           state.type === "ecode" ? "E-code" : "Physical card";
         const mark = document.getElementById("reviewMark");
-        mark.textContent = initials(b.name);
         mark.style.background = markColor(b.name);
+        mark.style.position = "relative";
+        mark.style.overflow = "hidden";
+        mark.innerHTML = `${initials(b.name)}<img src="images/cards/${slugify(b.name)}.png" alt="${b.name}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">`;
         document.getElementById("revBrand").textContent = b.name;
         document.getElementById("revType").textContent =
           state.type === "ecode" ? "E-code" : "Physical card";

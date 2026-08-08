@@ -496,10 +496,10 @@
         // duplicated for seamless loop
         const el = document.createElement("div");
         el.className =
-          "w-14 h-14 rounded-xl flex items-center justify-center font-display font-semibold text-white text-sm shrink-0";
+          "relative w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center font-display font-semibold text-white text-sm shrink-0";
         el.style.background = markColor(name);
-        el.textContent = initials(name);
         el.title = name;
+        el.innerHTML = `${initials(name)}<img src="images/cards/${slugify(name)}.png" alt="${name}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">`;
         track.appendChild(el);
       });
 

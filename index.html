@@ -508,161 +508,170 @@
     </nav>
 
     <script>
-      // ---- Gift card data (rate = ₦ per $1) ----
-      // Note: card marks are brand-neutral monograms by design (see /style-guide.html
-      // "Card marks" section) — no real logos or brand colors are bundled with this
-      // template. Swap in licensed brand art per-brand for a live deployment.
-      const brands = [
-        { name: "Apple & iTunes", rate: 1343.52 },
-        { name: "Razer Gold", rate: 1154.78 },
-        { name: "Steam", rate: 1213.64 },
-        { name: "Google Play", rate: 943.71 },
-        { name: "Sephora", rate: 1075.63 },
-        { name: "AMEX", rate: 202.95 },
-        { name: "Xbox", rate: 1197.4 },
-        { name: "Macy's", rate: 1024.89 },
-        { name: "Amazon", rate: 933.57 },
-        { name: "Target", rate: 1085.78 },
-        { name: "Roblox", rate: 710.32 },
-        { name: "GameStop", rate: 1047.22 },
-        { name: "Paysafecard", rate: 1451.09 },
-        { name: "PlayStation", rate: 913.27 },
-        { name: "Nordstrom", rate: 913.27 },
-        { name: "Foot Locker", rate: 1156.81 },
-        { name: "Vanilla", rate: 202.95 },
-        { name: "Mastercard", rate: 202.95 },
-        { name: "Visa", rate: 202.95 },
-      ];
+        // ---- Gift card data (rate = ₦ per $1) ----
+        // Note: card marks are brand-neutral monograms by design (see /style-guide.html
+        // "Card marks" section) — no real logos or brand colors are bundled with this
+        // template. Swap in licensed brand art per-brand for a live deployment.
+        const brands = [
+          { name: "Apple & iTunes", rate: 1343.52 },
+          { name: "Razer Gold", rate: 1154.78 },
+          { name: "Steam", rate: 1213.64 },
+          { name: "Google Play", rate: 943.71 },
+          { name: "Sephora", rate: 1075.63 },
+          { name: "AMEX", rate: 202.95 },
+          { name: "Xbox", rate: 1197.4 },
+          { name: "Macy's", rate: 1024.89 },
+          { name: "Amazon", rate: 933.57 },
+          { name: "Target", rate: 1085.78 },
+          { name: "Roblox", rate: 710.32 },
+          { name: "GameStop", rate: 1047.22 },
+          { name: "Paysafecard", rate: 1451.09 },
+          { name: "PlayStation", rate: 913.27 },
+          { name: "Nordstrom", rate: 913.27 },
+          { name: "Foot Locker", rate: 1156.81 },
+          { name: "Vanilla", rate: 202.95 },
+          { name: "Mastercard", rate: 202.95 },
+          { name: "Visa", rate: 202.95 },
+        ];
 
-      // ---- Brand-neutral card mark: deterministic color + initial, no trademarks ----
-      const markPalette = [
-        "#2F6F4E",
-        "#C9A227",
-        "#FF6B4A",
-        "#142018",
-        "#5C7566",
-      ];
-      function markColor(name) {
-        let h = 0;
-        for (let i = 0; i < name.length; i++)
-          h = name.charCodeAt(i) + ((h << 5) - h);
-        return markPalette[Math.abs(h) % markPalette.length];
-      }
+        // ---- Brand-neutral card mark: deterministic color + initial, no trademarks ----
+        const markPalette = [
+          "#2F6F4E",
+          "#C9A227",
+          "#FF6B4A",
+          "#142018",
+          "#5C7566",
+        ];
+        function markColor(name) {
+          let h = 0;
+          for (let i = 0; i < name.length; i++)
+            h = name.charCodeAt(i) + ((h << 5) - h);
+          return markPalette[Math.abs(h) % markPalette.length];
+        }
 
-      const grid = document.getElementById("giftGrid");
-      const fmt = (n) =>
-        "₦" +
-        n.toLocaleString("en-NG", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-      const initials = (name) =>
-        name
-          .split(/[&\s]+/)
-          .filter(Boolean)
-          .slice(0, 2)
-          .map((w) => w[0])
-          .join("")
-          .toUpperCase();
-
-      brands.forEach((b) => {
-        const tile = document.createElement("button");
-        tile.className =
-          "ticket card-surface border border-line text-left hover:border-emerald hover:-translate-y-0.5 transition";
-        tile.dataset.brand = b.name;
-        tile.innerHTML = `
-      <div class="flex-1 p-4 min-w-0">
-        <div class="w-10 h-10 rounded-lg flex items-center justify-center font-display font-semibold text-sm text-white mb-3" style="background:${markColor(b.name)}">
-          ${initials(b.name)}
-        </div>
-        <p class="text-sm font-semibold truncate">${b.name}</p>
-        <p class="text-xs font-mono text-emerald mt-0.5">${fmt(b.rate)}<span class="text-inksoft">/$</span></p>
-      </div>
-      <div class="stub w-4 text-line">
-        <span class="tile-notch"></span>
-      </div>
-    `;
-        tile.addEventListener("click", () => {
-          window.location.href =
-            "sell.html?brand=" + encodeURIComponent(b.name);
-        });
-        grid.appendChild(tile);
-      });
-
-      // ---- View switching ----
-      function setView(name) {
-        document
-          .querySelectorAll(".view")
-          .forEach((v) => v.classList.remove("active"));
-        document.getElementById("view-" + name).classList.add("active");
-        document
-          .querySelectorAll(".navlink")
-          .forEach((l) =>
-            l.classList.toggle("active", l.dataset.view === name),
-          );
-        window.scrollTo({
-          top: 0,
-          behavior: "instant" in window ? "instant" : "auto",
-        });
-      }
-      document.querySelectorAll("[data-view]").forEach((el) => {
-        el.addEventListener("click", () => setView(el.dataset.view));
-      });
-      document.querySelectorAll("[data-view-link]").forEach((el) => {
-        el.addEventListener("click", () => setView(el.dataset.viewLink));
-      });
-
-      // ---- Transaction filter tabs (visual only — list is empty) ----
-      document.querySelectorAll(".tab").forEach((t) => {
-        t.addEventListener("click", () => {
-          document.querySelectorAll(".tab").forEach((x) => {
-            x.classList.remove("active-tab", "border-ink");
-            x.classList.add("border-line", "text-inksoft");
+        const grid = document.getElementById("giftGrid");
+        const fmt = (n) =>
+          "₦" +
+          n.toLocaleString("en-NG", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
           });
-          t.classList.add("active-tab", "border-ink");
-          t.classList.remove("border-line", "text-inksoft");
+        const initials = (name) =>
+          name
+            .split(/[&\s]+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((w) => w[0])
+            .join("")
+            .toUpperCase();
+
+        const slugify = (name) =>
+          name
+            .toLowerCase()
+            .replace(/&/g, "and")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "");
+
+        brands.forEach((b) => {
+          const tile = document.createElement("button");
+          tile.className =
+            "ticket card-surface border border-line text-left hover:border-emerald hover:-translate-y-0.5 transition";
+          tile.dataset.brand = b.name;
+          tile.innerHTML = `
+        tile.innerHTML = `
+        <div class="flex-1 p-4 min-w-0">
+          <div class="relative w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center font-display font-semibold text-sm text-white mb-3" style="background:${markColor(b.name)}">
+            ${initials(b.name)}
+            <img src="images/cards/${slugify(b.name)}.png" alt="${b.name}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">
+          </div>
+          <p class="text-sm font-semibold truncate">${b.name}</p>
+          <p class="text-xs font-mono text-emerald mt-0.5">${fmt(b.rate)}<span class="text-inksoft">/$</span></p>
+        </div>
+        <div class="stub w-4 text-line">
+          <span class="tile-notch"></span>
+        </div>
+      `;
+          tile.addEventListener("click", () => {
+            window.location.href =
+              "sell.html?brand=" + encodeURIComponent(b.name);
+          });
+          grid.appendChild(tile);
         });
-      });
 
-      // ---- Balance visibility toggle ----
-      let visible = true;
-      const balanceEl = document.getElementById("balanceValue");
-      const eyeIcon = document.getElementById("eyeIcon");
-      const eyeOffIcon = document.getElementById("eyeOffIcon");
-      document.getElementById("toggleBalance").addEventListener("click", () => {
-        visible = !visible;
-        balanceEl.classList.toggle("blur-balance", !visible);
-        eyeIcon.classList.toggle("hidden", !visible);
-        eyeOffIcon.classList.toggle("hidden", visible);
-      });
+        // ---- View switching ----
+        function setView(name) {
+          document
+            .querySelectorAll(".view")
+            .forEach((v) => v.classList.remove("active"));
+          document.getElementById("view-" + name).classList.add("active");
+          document
+            .querySelectorAll(".navlink")
+            .forEach((l) =>
+              l.classList.toggle("active", l.dataset.view === name),
+            );
+          window.scrollTo({
+            top: 0,
+            behavior: "instant" in window ? "instant" : "auto",
+          });
+        }
+        document.querySelectorAll("[data-view]").forEach((el) => {
+          el.addEventListener("click", () => setView(el.dataset.view));
+        });
+        document.querySelectorAll("[data-view-link]").forEach((el) => {
+          el.addEventListener("click", () => setView(el.dataset.viewLink));
+        });
 
-      // ---- Dark mode toggle ----
-      const root = document.documentElement;
-      const themeToggle = document.getElementById("themeToggle");
-      const iconMoon = document.getElementById("iconMoon");
-      const iconSun = document.getElementById("iconSun");
-      function applyTheme(isDark) {
-        root.classList.toggle("dark", isDark);
-        iconMoon.classList.toggle("hidden", isDark);
-        iconSun.classList.toggle("hidden", !isDark);
-        localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
-      }
-      const savedTheme = localStorage.getItem("cardmax-theme");
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
-      ).matches;
-      applyTheme(savedTheme ? savedTheme === "dark" : prefersDark);
-      themeToggle.addEventListener("click", () =>
-        applyTheme(!root.classList.contains("dark")),
-      );
+        // ---- Transaction filter tabs (visual only — list is empty) ----
+        document.querySelectorAll(".tab").forEach((t) => {
+          t.addEventListener("click", () => {
+            document.querySelectorAll(".tab").forEach((x) => {
+              x.classList.remove("active-tab", "border-ink");
+              x.classList.add("border-line", "text-inksoft");
+            });
+            t.classList.add("active-tab", "border-ink");
+            t.classList.remove("border-line", "text-inksoft");
+          });
+        });
 
-      // ---- Render Lucide icons (script is deferred, so DOM is ready by the time it runs) ----
-      document.addEventListener("DOMContentLoaded", () => {
-        if (window.lucide) lucide.createIcons();
-      });
-      // Fallback in case DOMContentLoaded already fired before this ran
-      if (document.readyState !== "loading" && window.lucide)
-        lucide.createIcons();
+        // ---- Balance visibility toggle ----
+        let visible = true;
+        const balanceEl = document.getElementById("balanceValue");
+        const eyeIcon = document.getElementById("eyeIcon");
+        const eyeOffIcon = document.getElementById("eyeOffIcon");
+        document.getElementById("toggleBalance").addEventListener("click", () => {
+          visible = !visible;
+          balanceEl.classList.toggle("blur-balance", !visible);
+          eyeIcon.classList.toggle("hidden", !visible);
+          eyeOffIcon.classList.toggle("hidden", visible);
+        });
+
+        // ---- Dark mode toggle ----
+        const root = document.documentElement;
+        const themeToggle = document.getElementById("themeToggle");
+        const iconMoon = document.getElementById("iconMoon");
+        const iconSun = document.getElementById("iconSun");
+        function applyTheme(isDark) {
+          root.classList.toggle("dark", isDark);
+          iconMoon.classList.toggle("hidden", isDark);
+          iconSun.classList.toggle("hidden", !isDark);
+          localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
+        }
+        const savedTheme = localStorage.getItem("cardmax-theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        applyTheme(savedTheme ? savedTheme === "dark" : prefersDark);
+        themeToggle.addEventListener("click", () =>
+          applyTheme(!root.classList.contains("dark")),
+        );
+
+        // ---- Render Lucide icons (script is deferred, so DOM is ready by the time it runs) ----
+        document.addEventListener("DOMContentLoaded", () => {
+          if (window.lucide) lucide.createIcons();
+        });
+        // Fallback in case DOMContentLoaded already fired before this ran
+        if (document.readyState !== "loading" && window.lucide)
+          lucide.createIcons();
     </script>
   </body>
 </html>
