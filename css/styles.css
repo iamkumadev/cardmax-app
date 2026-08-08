@@ -901,7 +901,7 @@ ol {
 }
 .divide-y > * + * {
   border-top-width: 1px;
-  border-style: solid;
+  /* border-style: solid; */
 }
 
 .opacity-0 {
