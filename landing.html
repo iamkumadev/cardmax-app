@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CardMax — Turn gift cards into cash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+    <script>
+      function withOpacity(v) {
+        return ({ opacityValue }) =>
+          opacityValue !== undefined
+            ? `rgb(var(${v}) / ${opacityValue})`
+            : `rgb(var(${v}))`;
+      }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              paper: withOpacity("--paper"),
+              paper2: withOpacity("--surface-2"),
+              ink: withOpacity("--ink"),
+              inksoft: withOpacity("--ink-soft"),
+              emerald: withOpacity("--emerald"),
+              emeraldDeep: withOpacity("--emerald-deep"),
+              coral: withOpacity("--coral"),
+              gold: withOpacity("--gold"),
+              line: withOpacity("--line"),
+            },
+            fontFamily: {
+              display: ["Fraunces", "serif"],
+              ui: ["Space Grotesk", "sans-serif"],
+              mono: ["IBM Plex Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --paper: 238 241 236;
+        --surface: 255 255 255;
+        --surface-2: 228 233 225;
+        --line: 198 208 194;
+        --ink: 20 32 24;
+        --ink-soft: 75 86 78;
+        --emerald: 47 111 78;
+        --emerald-deep: 31 79 55;
+        --gold: 201 162 39;
+        --coral: 255 107 74;
+      }
+      html.dark {
+        --paper: 15 25 19;
+        --surface: 22 34 26;
+        --surface-2: 28 42 33;
+        --line: 42 58 47;
+        --ink: 237 242 234;
+        --ink-soft: 159 175 156;
+        --emerald: 79 161 121;
+        --emerald-deep: 107 190 148;
+        --gold: 217 182 70;
+        --coral: 255 128 100;
+      }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: rgb(var(--paper));
+        color: rgb(var(--ink));
+      }
+      .card-surface {
+        background: rgb(var(--surface));
+      }
+      :focus-visible {
+        outline: 2px solid rgb(var(--emerald));
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      .ticket {
+        position: relative;
+        display: flex;
+        border-radius: 20px;
+      }
+      .ticket .stub {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .ticket .stub::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 2px dashed currentColor;
+        opacity: 0.35;
+      }
+      .notch {
+        position: absolute;
+        left: -12px;
+        width: 24px;
+        height: 24px;
+        background: rgb(var(--paper));
+        border-radius: 999px;
+      }
+      .notch-top {
+        top: -12px;
+      }
+      .notch-bottom {
+        bottom: -12px;
+      }
+      .tile-notch {
+        position: absolute;
+        top: 50%;
+        left: -9px;
+        width: 18px;
+        height: 18px;
+        background: rgb(var(--paper));
+        border-radius: 999px;
+        transform: translateY(-50%);
+      }
+
+      .step-num {
+        font-family: "Fraunces", serif;
+      }
+      .marquee-track {
+        animation: scroll 28s linear infinite;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .marquee-track {
+          animation: none;
+        }
+      }
+      @keyframes scroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+    </style>
+  </head>
+  <body class="font-ui antialiased">
+    <!-- ============ NAV ============ -->
+    <header
+      class="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-2">
+        <div
+          class="w-9 h-9 rounded-full bg-emerald flex items-center justify-center text-paper font-display font-semibold"
+        >
+          C
+        </div>
+        <span class="font-display text-xl font-semibold tracking-tight"
+          >CardMax</span
+        >
+      </div>
+      <nav
+        class="hidden md:flex items-center gap-8 text-sm font-medium text-inksoft"
+      >
+        <a href="#how-it-works" class="hover:text-ink transition"
+          >How it works</a
+        >
+        <a href="#rates" class="hover:text-ink transition">Rates</a>
+        <a href="#faq" class="hover:text-ink transition">FAQ</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button
+          id="themeToggle"
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Toggle dark mode"
+        >
+          <i data-lucide="moon" id="iconMoon" class="w-[16px] h-[16px]"></i>
+          <i
+            data-lucide="sun"
+            id="iconSun"
+            class="w-[16px] h-[16px] hidden"
+          ></i>
+        </button>
+        <a
+          href="login.html"
+          class="hidden sm:inline text-sm font-semibold text-inksoft hover:text-ink transition"
+          >Log in</a
+        >
+        <a
+          href="signup.html"
+          class="bg-emerald text-paper text-sm font-semibold px-4 py-2 rounded-full hover:bg-emeraldDeep transition"
+          >Sign up</a
+        >
+      </div>
+    </header>
+
+    <!-- ============ HERO ============ -->
+    <section
+      class="max-w-6xl mx-auto px-5 sm:px-8 pt-8 pb-20 grid lg:grid-cols-2 gap-12 items-center"
+    >
+      <div>
+        <span
+          class="inline-block text-xs font-mono uppercase tracking-wide text-emerald bg-emerald/10 px-3 py-1 rounded-full mb-5"
+          >Now with 6% welcome bonus</span
+        >
+        <h1
+          class="font-display font-semibold text-4xl sm:text-5xl leading-[1.08] mb-5"
+        >
+          Turn a gift card into cash before your coffee gets cold.
+        </h1>
+        <p class="text-inksoft text-lg leading-relaxed mb-8 max-w-md">
+          E-code or physical, from 19+ brands. Submit it, we verify it, your
+          balance updates — usually inside an hour.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="signup.html"
+            class="bg-emerald text-paper font-semibold px-6 py-3 rounded-full hover:bg-emeraldDeep transition"
+            >Get started free</a
+          >
+          <a
+            href="#how-it-works"
+            class="border border-line font-semibold px-6 py-3 rounded-full hover:bg-paper2 transition"
+            >See how it works</a
+          >
+        </div>
+        <div class="flex items-center gap-6 mt-10 text-xs text-inksoft">
+          <span class="flex items-center gap-1.5"
+            ><i data-lucide="shield-check" class="w-4 h-4 text-emerald"></i>
+            Verified payouts</span
+          >
+          <span class="flex items-center gap-1.5"
+            ><i data-lucide="clock" class="w-4 h-4 text-emerald"></i> ~1hr
+            review</span
+          >
+        </div>
+      </div>
+
+      <!-- Hero ticket visual -->
+      <div class="relative">
+        <div class="ticket bg-emerald text-paper shadow-2xl">
+          <div class="flex-1 p-6">
+            <p class="text-xs text-paper/70 mb-1">Steam · E-code</p>
+            <p class="font-display font-semibold text-4xl mb-1">₦121,364.00</p>
+            <p class="text-xs font-mono text-paper/60">Ref · TXN-8842-CM-NG</p>
+            <div
+              class="mt-6 pt-4 border-t border-paper/20 flex items-center gap-2 text-xs"
+            >
+              <i data-lucide="check-circle" class="w-4 h-4"></i> Paid out
+            </div>
+          </div>
+          <div class="stub w-14 flex items-center justify-center">
+            <span class="notch notch-top"></span>
+            <i data-lucide="ticket" class="w-5 h-5"></i>
+            <span class="notch notch-bottom"></span>
+          </div>
+        </div>
+        <div
+          class="ticket card-surface border border-line absolute -bottom-8 -left-6 w-48 shadow-xl hidden sm:flex"
+        >
+          <div class="flex-1 p-4">
+            <p class="text-xs text-inksoft mb-1">Rate today</p>
+            <p class="font-display font-semibold text-lg text-emerald">
+              ₦1,343.52<span class="text-xs text-inksoft font-normal">/$</span>
+            </p>
+          </div>
+          <div class="stub w-3 text-line"><span class="tile-notch"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BRAND MARQUEE ============ -->
+    <section class="border-y border-line py-6 overflow-hidden">
+      <p
+        class="text-center text-xs font-mono uppercase tracking-wide text-inksoft mb-4"
+      >
+        19+ brands accepted
+      </p>
+      <div class="flex overflow-hidden">
+        <div
+          class="marquee-track flex gap-3 shrink-0 px-1.5"
+          id="marqueeTrack"
+        ></div>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section id="how-it-works" class="max-w-6xl mx-auto px-5 sm:px-8 py-20">
+      <p class="text-xs font-mono uppercase tracking-wide text-emerald mb-2">
+        How it works
+      </p>
+      <h2 class="font-display font-semibold text-3xl mb-12 max-w-md">
+        Three steps, most of it done in the first two.
+      </h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <p class="step-num text-4xl font-semibold text-emerald/30 mb-3">01</p>
+          <h3 class="font-semibold text-lg mb-2">Pick a brand &amp; type</h3>
+          <p class="text-sm text-inksoft leading-relaxed">
+            Choose the gift card brand, then whether it's an e-code or a
+            physical card in hand.
+          </p>
+        </div>
+        <div>
+          <p class="step-num text-4xl font-semibold text-emerald/30 mb-3">02</p>
+          <h3 class="font-semibold text-lg mb-2">Submit the details</h3>
+          <p class="text-sm text-inksoft leading-relaxed">
+            Paste the code, or photograph the card front and back. Set the value
+            and confirm.
+          </p>
+        </div>
+        <div>
+          <p class="step-num text-4xl font-semibold text-emerald/30 mb-3">03</p>
+          <h3 class="font-semibold text-lg mb-2">Get paid</h3>
+          <p class="text-sm text-inksoft leading-relaxed">
+            We verify and credit your balance — withdraw to your bank whenever
+            you're ready.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RATES ============ -->
+    <section id="rates" class="max-w-6xl mx-auto px-5 sm:px-8 py-20">
+      <div class="grid lg:grid-cols-2 gap-12 items-start">
+        <div>
+          <p
+            class="text-xs font-mono uppercase tracking-wide text-emerald mb-2"
+          >
+            Rates
+          </p>
+          <h2 class="font-display font-semibold text-3xl mb-4">
+            Rates that don't hide behind a "contact us."
+          </h2>
+          <p class="text-inksoft leading-relaxed max-w-md mb-6">
+            Every rate is visible before you submit anything — per dollar,
+            updated regularly, no surprise deductions after review.
+          </p>
+          <a
+            href="signup.html"
+            class="inline-block bg-emerald text-paper font-semibold px-6 py-3 rounded-full hover:bg-emeraldDeep transition"
+            >Check your card's rate</a
+          >
+        </div>
+        <div class="card-surface border border-line rounded-2xl p-2">
+          <ul class="divide-y divide-line font-mono text-sm">
+            <li class="flex justify-between px-4 py-3">
+              <span>Paysafecard</span
+              ><span class="text-emerald">₦1,451.09/$</span>
+            </li>
+            <li class="flex justify-between px-4 py-3">
+              <span>Apple &amp; iTunes</span
+              ><span class="text-emerald">₦1,343.52/$</span>
+            </li>
+            <li class="flex justify-between px-4 py-3">
+              <span>Steam</span><span class="text-emerald">₦1,213.64/$</span>
+            </li>
+            <li class="flex justify-between px-4 py-3">
+              <span>Sephora</span><span class="text-emerald">₦1,075.63/$</span>
+            </li>
+            <li class="flex justify-between px-4 py-3">
+              <span>GameStop</span><span class="text-emerald">₦1,047.22/$</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA BANNER ============ -->
+    <section class="max-w-6xl mx-auto px-5 sm:px-8 py-6">
+      <div class="ticket bg-gold/10 border border-gold/40">
+        <div
+          class="flex-1 p-6 sm:p-8 flex items-center justify-between gap-4 flex-wrap"
+        >
+          <div>
+            <p
+              class="text-xs uppercase tracking-wide text-gold font-semibold mb-1"
+            >
+              New users · bonus upgraded
+            </p>
+            <p class="font-display font-semibold text-2xl">
+              Up to ₦9,000 welcome bonus
+            </p>
+            <p class="text-sm text-inksoft mt-1">
+              6% cashback on your first sale, any brand.
+            </p>
+          </div>
+          <a
+            href="signup.html"
+            class="shrink-0 bg-ink text-paper text-sm font-semibold px-6 py-3 rounded-full hover:bg-emeraldDeep transition"
+            >Claim now</a
+          >
+        </div>
+        <div class="stub w-4 hidden sm:flex text-gold/40">
+          <span
+            class="notch notch-top"
+            style="left: -8px; width: 16px; height: 16px"
+          ></span>
+          <span
+            class="notch notch-bottom"
+            style="left: -8px; width: 16px; height: 16px"
+          ></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="faq" class="max-w-2xl mx-auto px-5 sm:px-8 py-20">
+      <p
+        class="text-xs font-mono uppercase tracking-wide text-emerald mb-2 text-center"
+      >
+        FAQ
+      </p>
+      <h2 class="font-display font-semibold text-3xl mb-10 text-center">
+        Common questions
+      </h2>
+      <div class="space-y-3" id="faqList">
+        <details class="card-surface border border-line rounded-xl p-4 group">
+          <summary
+            class="font-semibold text-sm cursor-pointer list-none flex justify-between items-center"
+          >
+            What's the difference between e-code and physical?
+            <i
+              data-lucide="chevron-down"
+              class="w-4 h-4 text-inksoft transition group-open:rotate-180"
+            ></i>
+          </summary>
+          <p class="text-sm text-inksoft mt-3 leading-relaxed">
+            An e-code is a digital code you paste in directly. A physical card
+            needs a clear photo of the front and back so we can read the number
+            and PIN.
+          </p>
+        </details>
+        <details class="card-surface border border-line rounded-xl p-4 group">
+          <summary
+            class="font-semibold text-sm cursor-pointer list-none flex justify-between items-center"
+          >
+            How long does verification take?
+            <i
+              data-lucide="chevron-down"
+              class="w-4 h-4 text-inksoft transition group-open:rotate-180"
+            ></i>
+          </summary>
+          <p class="text-sm text-inksoft mt-3 leading-relaxed">
+            Usually under an hour for e-codes. Physical cards can take a little
+            longer since a photo needs to be reviewed manually.
+          </p>
+        </details>
+        <details class="card-surface border border-line rounded-xl p-4 group">
+          <summary
+            class="font-semibold text-sm cursor-pointer list-none flex justify-between items-center"
+          >
+            What happens if my card gets rejected?
+            <i
+              data-lucide="chevron-down"
+              class="w-4 h-4 text-inksoft transition group-open:rotate-180"
+            ></i>
+          </summary>
+          <p class="text-sm text-inksoft mt-3 leading-relaxed">
+            You'll get a reason in your transaction history and can contact
+            support directly from that trade to dispute it.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="border-t border-line">
+      <div
+        class="max-w-6xl mx-auto px-5 sm:px-8 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8"
+      >
+        <div>
+          <div class="flex items-center gap-2 mb-3">
+            <div
+              class="w-8 h-8 rounded-full bg-emerald flex items-center justify-center text-paper font-display font-semibold text-sm"
+            >
+              C
+            </div>
+            <span class="font-display font-semibold">CardMax</span>
+          </div>
+          <p class="text-xs text-inksoft leading-relaxed">
+            Turn a gift card into cash, verified and fast.
+          </p>
+        </div>
+        <div>
+          <p
+            class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+          >
+            Product
+          </p>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a
+                href="#how-it-works"
+                class="text-inksoft hover:text-ink transition"
+                >How it works</a
+              >
+            </li>
+            <li>
+              <a href="#rates" class="text-inksoft hover:text-ink transition"
+                >Rates</a
+              >
+            </li>
+            <li>
+              <a href="sell.html" class="text-inksoft hover:text-ink transition"
+                >Sell a card</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+          >
+            Account
+          </p>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a
+                href="login.html"
+                class="text-inksoft hover:text-ink transition"
+                >Log in</a
+              >
+            </li>
+            <li>
+              <a
+                href="signup.html"
+                class="text-inksoft hover:text-ink transition"
+                >Sign up</a
+              >
+            </li>
+            <li>
+              <a href="#faq" class="text-inksoft hover:text-ink transition"
+                >FAQ</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p
+            class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+          >
+            Legal
+          </p>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a href="#" class="text-inksoft hover:text-ink transition"
+                >Terms</a
+              >
+            </li>
+            <li>
+              <a href="#" class="text-inksoft hover:text-ink transition"
+                >Privacy</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-line py-6 text-center text-xs text-inksoft">
+        © 2026 CardMax. Template demo — not a real financial service.
+      </div>
+    </footer>
+
+    <script>
+      const brands = [
+        "Apple & iTunes",
+        "Razer Gold",
+        "Steam",
+        "Google Play",
+        "Sephora",
+        "AMEX",
+        "Xbox",
+        "Macy's",
+        "Amazon",
+        "Target",
+        "Roblox",
+        "GameStop",
+        "Paysafecard",
+        "PlayStation",
+        "Nordstrom",
+        "Foot Locker",
+        "Vanilla",
+        "Mastercard",
+        "Visa",
+      ];
+      const markPalette = [
+        "#2F6F4E",
+        "#C9A227",
+        "#FF6B4A",
+        "#142018",
+        "#5C7566",
+      ];
+      function markColor(name) {
+        let h = 0;
+        for (let i = 0; i < name.length; i++)
+          h = name.charCodeAt(i) + ((h << 5) - h);
+        return markPalette[Math.abs(h) % markPalette.length];
+      }
+      const initials = (name) =>
+        name
+          .split(/[&\s]+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((w) => w[0])
+          .join("")
+          .toUpperCase();
+
+      const track = document.getElementById("marqueeTrack");
+      [...brands, ...brands].forEach((name) => {
+        // duplicated for seamless loop
+        const el = document.createElement("div");
+        el.className =
+          "w-14 h-14 rounded-xl flex items-center justify-center font-display font-semibold text-white text-sm shrink-0";
+        el.style.background = markColor(name);
+        el.textContent = initials(name);
+        el.title = name;
+        track.appendChild(el);
+      });
+
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const iconMoon = document.getElementById("iconMoon");
+      const iconSun = document.getElementById("iconSun");
+      function applyTheme(isDark) {
+        root.classList.toggle("dark", isDark);
+        iconMoon.classList.toggle("hidden", isDark);
+        iconSun.classList.toggle("hidden", !isDark);
+        localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
+      }
+      const saved = localStorage.getItem("cardmax-theme");
+      applyTheme(
+        saved
+          ? saved === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches,
+      );
+      themeToggle.addEventListener("click", () =>
+        applyTheme(!root.classList.contains("dark")),
+      );
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
+</html>

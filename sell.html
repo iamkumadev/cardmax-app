@@ -519,6 +519,13 @@
         .getElementById("brandSearch")
         .addEventListener("input", (e) => renderBrands(e.target.value));
 
+      // Pre-select brand if arriving from a dashboard tile (?brand=Steam)
+      const preselect = new URLSearchParams(window.location.search).get(
+        "brand",
+      );
+      if (preselect && brands.some((b) => b.name === preselect))
+        selectBrand(preselect);
+
       function selectBrand(name) {
         state.brand = name;
         document
