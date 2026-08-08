@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sell a gift card — CardMax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+    <script>
+      function withOpacity(v) {
+        return ({ opacityValue }) =>
+          opacityValue !== undefined
+            ? `rgb(var(${v}) / ${opacityValue})`
+            : `rgb(var(${v}))`;
+      }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              paper: withOpacity("--paper"),
+              paper2: withOpacity("--surface-2"),
+              ink: withOpacity("--ink"),
+              inksoft: withOpacity("--ink-soft"),
+              emerald: withOpacity("--emerald"),
+              emeraldDeep: withOpacity("--emerald-deep"),
+              coral: withOpacity("--coral"),
+              gold: withOpacity("--gold"),
+              line: withOpacity("--line"),
+            },
+            fontFamily: {
+              display: ["Fraunces", "serif"],
+              ui: ["Space Grotesk", "sans-serif"],
+              mono: ["IBM Plex Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --paper: 238 241 236;
+        --surface: 255 255 255;
+        --surface-2: 228 233 225;
+        --line: 198 208 194;
+        --ink: 20 32 24;
+        --ink-soft: 75 86 78;
+        --emerald: 47 111 78;
+        --emerald-deep: 31 79 55;
+        --gold: 201 162 39;
+        --coral: 255 107 74;
+      }
+      html.dark {
+        --paper: 15 25 19;
+        --surface: 22 34 26;
+        --surface-2: 28 42 33;
+        --line: 42 58 47;
+        --ink: 237 242 234;
+        --ink-soft: 159 175 156;
+        --emerald: 79 161 121;
+        --emerald-deep: 107 190 148;
+        --gold: 217 182 70;
+        --coral: 255 128 100;
+      }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: rgb(var(--paper));
+        color: rgb(var(--ink));
+      }
+      .card-surface {
+        background: rgb(var(--surface));
+      }
+      :focus-visible {
+        outline: 2px solid rgb(var(--emerald));
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      .ticket {
+        position: relative;
+        display: flex;
+        border-radius: 20px;
+      }
+      .ticket .stub {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .ticket .stub::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 2px dashed currentColor;
+        opacity: 0.35;
+      }
+      .notch {
+        position: absolute;
+        left: -12px;
+        width: 24px;
+        height: 24px;
+        background: rgb(var(--paper));
+        border-radius: 999px;
+      }
+      .notch-top {
+        top: -12px;
+      }
+      .notch-bottom {
+        bottom: -12px;
+      }
+
+      .flow-step {
+        display: none;
+      }
+      .flow-step.active {
+        display: block;
+        animation: fadeIn 0.3s ease both;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      /* Progress bar */
+      .progress-track {
+        height: 4px;
+        background: rgb(var(--surface-2));
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: rgb(var(--emerald));
+        border-radius: 999px;
+        transition: width 0.3s ease;
+      }
+
+      .segctrl {
+        display: flex;
+        background: rgb(var(--surface-2));
+        border-radius: 999px;
+        padding: 3px;
+      }
+      .segctrl button {
+        flex: 1;
+      }
+      .segbtn.seg-active {
+        background: rgb(var(--ink));
+        color: rgb(var(--paper));
+      }
+
+      .dropzone {
+        border: 2px dashed rgb(var(--line));
+        transition:
+          border-color 0.15s ease,
+          background 0.15s ease;
+      }
+      .dropzone.drag-over {
+        border-color: rgb(var(--emerald));
+        background: rgb(var(--emerald) / 0.06);
+      }
+
+      .brand-pick {
+        border: 2px solid transparent;
+      }
+      .brand-pick.selected {
+        border-color: rgb(var(--emerald));
+      }
+    </style>
+  </head>
+  <body class="font-ui antialiased">
+    <header class="max-w-xl mx-auto px-5 sm:px-6 pt-6 pb-4">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <a
+            href="index.html"
+            id="backLink"
+            class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+            aria-label="Back"
+          >
+            <i data-lucide="arrow-left" class="w-[17px] h-[17px]"></i>
+          </a>
+          <h1 id="stepTitle" class="font-display font-semibold text-xl">
+            Choose a brand
+          </h1>
+        </div>
+        <button
+          id="themeToggle"
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Toggle dark mode"
+        >
+          <i data-lucide="moon" id="iconMoon" class="w-[16px] h-[16px]"></i>
+          <i
+            data-lucide="sun"
+            id="iconSun"
+            class="w-[16px] h-[16px] hidden"
+          ></i>
+        </button>
+      </div>
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill" style="width: 25%"></div>
+      </div>
+      <p id="stepCount" class="text-xs font-mono text-inksoft mt-2">
+        Step 1 of 4
+      </p>
+    </header>
+
+    <main class="max-w-xl mx-auto px-5 sm:px-6 pb-32">
+      <!-- ===== STEP 1: brand ===== -->
+      <section class="flow-step active" data-step="1">
+        <div class="relative mb-4">
+          <i
+            data-lucide="search"
+            class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-inksoft"
+          ></i>
+          <input
+            id="brandSearch"
+            type="text"
+            placeholder="Search brands"
+            class="w-full border border-line rounded-xl pl-10 pr-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none"
+          />
+        </div>
+        <div id="brandGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-3"></div>
+      </section>
+
+      <!-- ===== STEP 2: type + details ===== -->
+      <section class="flow-step" data-step="2">
+        <div
+          class="flex items-center gap-3 mb-6 card-surface border border-line rounded-xl p-3"
+        >
+          <div
+            id="selectedMark"
+            class="w-10 h-10 rounded-lg flex items-center justify-center font-display font-semibold text-white shrink-0"
+          ></div>
+          <div>
+            <p class="text-xs text-inksoft">Selling</p>
+            <p id="selectedBrandName" class="font-semibold text-sm"></p>
+          </div>
+        </div>
+
+        <label class="block text-xs font-semibold text-inksoft mb-1.5"
+          >Card type</label
+        >
+        <div class="segctrl mb-5">
+          <button
+            type="button"
+            class="segbtn seg-active px-3 py-2 rounded-full text-sm font-semibold transition"
+            data-cardtype="ecode"
+          >
+            E-code
+          </button>
+          <button
+            type="button"
+            class="segbtn px-3 py-2 rounded-full text-sm font-semibold text-inksoft transition"
+            data-cardtype="physical"
+          >
+            Physical card
+          </button>
+        </div>
+
+        <div id="ecodeFields">
+          <label class="block text-xs font-semibold text-inksoft mb-1.5"
+            >Card code</label
+          >
+          <input
+            id="cardCode"
+            type="text"
+            placeholder="e.g. XXXX-XXXX-XXXX"
+            class="w-full border border-line rounded-xl px-3 py-2.5 mb-5 text-sm font-medium card-surface focus:border-emerald outline-none font-mono"
+          />
+        </div>
+
+        <div id="physicalFields" class="hidden">
+          <label class="block text-xs font-semibold text-inksoft mb-1.5"
+            >Card image</label
+          >
+          <label
+            id="dropzone"
+            for="cardImage"
+            class="dropzone rounded-xl flex flex-col items-center justify-center text-center px-4 py-6 mb-2 cursor-pointer"
+          >
+            <i data-lucide="camera" class="w-6 h-6 text-inksoft mb-2"></i>
+            <span class="text-sm font-semibold">Upload photo of the card</span>
+            <span class="text-xs text-inksoft mt-1"
+              >Front and back, showing the number and PIN clearly</span
+            >
+            <input
+              id="cardImage"
+              type="file"
+              accept="image/*"
+              multiple
+              class="hidden"
+            />
+          </label>
+          <div id="imagePreviews" class="grid grid-cols-4 gap-2 mb-5"></div>
+        </div>
+
+        <label class="block text-xs font-semibold text-inksoft mb-1.5"
+          >Card value ($)</label
+        >
+        <input
+          id="cardAmount"
+          type="number"
+          min="0"
+          value="100"
+          class="w-full border border-line rounded-xl px-3 py-2.5 mb-2 text-sm font-medium card-surface focus:border-emerald outline-none font-mono"
+        />
+        <div
+          class="flex items-center justify-between bg-paper2 rounded-xl px-4 py-3"
+        >
+          <span class="text-sm text-inksoft">You'll receive</span>
+          <span
+            id="payoutPreview"
+            class="font-display font-semibold text-lg text-emerald"
+            >₦0.00</span
+          >
+        </div>
+      </section>
+
+      <!-- ===== STEP 3: review ===== -->
+      <section class="flow-step" data-step="3">
+        <div class="ticket bg-emerald text-paper mb-6">
+          <div class="flex-1 p-6">
+            <div class="flex items-center justify-between mb-6">
+              <div
+                id="reviewMark"
+                class="w-11 h-11 rounded-lg flex items-center justify-center font-display font-semibold"
+              ></div>
+              <span
+                id="reviewType"
+                class="px-3 py-1 rounded-full text-xs font-semibold bg-paper/15"
+                >E-code</span
+              >
+            </div>
+            <p id="reviewBrand" class="text-xs text-paper/70 mb-1"></p>
+            <p id="reviewPayout" class="font-display font-semibold text-3xl">
+              ₦0.00
+            </p>
+          </div>
+          <div class="stub w-14 flex items-center justify-center">
+            <span class="notch notch-top"></span>
+            <i data-lucide="ticket" class="w-5 h-5"></i>
+            <span class="notch notch-bottom"></span>
+          </div>
+        </div>
+
+        <div
+          class="card-surface border border-line rounded-2xl divide-y divide-line text-sm"
+        >
+          <div class="flex justify-between p-4">
+            <span class="text-inksoft">Brand</span
+            ><span id="revBrand" class="font-semibold"></span>
+          </div>
+          <div class="flex justify-between p-4">
+            <span class="text-inksoft">Card type</span
+            ><span id="revType" class="font-semibold"></span>
+          </div>
+          <div class="flex justify-between p-4">
+            <span class="text-inksoft">Face value</span
+            ><span id="revValue" class="font-mono"></span>
+          </div>
+          <div class="flex justify-between p-4">
+            <span class="text-inksoft">Rate applied</span
+            ><span id="revRate" class="font-mono"></span>
+          </div>
+        </div>
+        <p class="text-xs text-inksoft mt-4 leading-relaxed">
+          By continuing you confirm this card hasn't been used or listed
+          elsewhere. Payout arrives after verification.
+        </p>
+      </section>
+
+      <!-- ===== STEP 4: confirmation ===== -->
+      <section class="flow-step text-center pt-8" data-step="4">
+        <div
+          class="w-16 h-16 rounded-full bg-emerald/10 flex items-center justify-center mx-auto mb-5"
+        >
+          <i data-lucide="check" class="w-7 h-7 text-emerald"></i>
+        </div>
+        <h2 class="font-display font-semibold text-2xl mb-2">Card submitted</h2>
+        <p class="text-inksoft mb-1">
+          We're reviewing it now — this usually takes under an hour.
+        </p>
+        <p id="refCode" class="text-xs font-mono text-inksoft mb-8"></p>
+        <div class="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
+          <a
+            href="transaction-detail.html"
+            class="flex-1 bg-emerald text-paper font-semibold py-3 rounded-full hover:bg-emeraldDeep transition"
+            >View transaction</a
+          >
+          <button
+            id="sellAnotherBtn"
+            class="flex-1 border border-line font-semibold py-3 rounded-full hover:bg-paper2 transition"
+          >
+            Sell another
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Sticky footer nav -->
+    <footer
+      id="flowFooter"
+      class="fixed bottom-0 inset-x-0 card-surface border-t border-line p-4"
+    >
+      <div class="max-w-xl mx-auto flex gap-3">
+        <button
+          id="prevBtn"
+          class="hidden px-5 py-3 rounded-full font-semibold text-sm border border-line hover:bg-paper2 transition"
+        >
+          Back
+        </button>
+        <button
+          id="nextBtn"
+          disabled
+          class="flex-1 bg-emerald text-paper font-semibold py-3 rounded-full hover:bg-emeraldDeep transition disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Continue
+        </button>
+      </div>
+    </footer>
+
+    <script>
+      const brands = [
+        { name: "Apple & iTunes", rate: 1343.52 },
+        { name: "Razer Gold", rate: 1154.78 },
+        { name: "Steam", rate: 1213.64 },
+        { name: "Google Play", rate: 943.71 },
+        { name: "Sephora", rate: 1075.63 },
+        { name: "AMEX", rate: 202.95 },
+        { name: "Xbox", rate: 1197.4 },
+        { name: "Macy's", rate: 1024.89 },
+        { name: "Amazon", rate: 933.57 },
+        { name: "Target", rate: 1085.78 },
+        { name: "Roblox", rate: 710.32 },
+        { name: "GameStop", rate: 1047.22 },
+        { name: "Paysafecard", rate: 1451.09 },
+        { name: "PlayStation", rate: 913.27 },
+        { name: "Nordstrom", rate: 913.27 },
+        { name: "Foot Locker", rate: 1156.81 },
+        { name: "Vanilla", rate: 202.95 },
+        { name: "Mastercard", rate: 202.95 },
+        { name: "Visa", rate: 202.95 },
+      ];
+      const markPalette = [
+        "#2F6F4E",
+        "#C9A227",
+        "#FF6B4A",
+        "#142018",
+        "#5C7566",
+      ];
+      function markColor(name) {
+        let h = 0;
+        for (let i = 0; i < name.length; i++)
+          h = name.charCodeAt(i) + ((h << 5) - h);
+        return markPalette[Math.abs(h) % markPalette.length];
+      }
+      const initials = (name) =>
+        name
+          .split(/[&\s]+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((w) => w[0])
+          .join("")
+          .toUpperCase();
+      const fmt = (n) =>
+        "₦" +
+        n.toLocaleString("en-NG", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+
+      let state = { brand: null, type: "ecode", amount: 100 };
+
+      // ---- Step 1: brand grid ----
+      const brandGrid = document.getElementById("brandGrid");
+      function renderBrands(filter = "") {
+        brandGrid.innerHTML = "";
+        brands
+          .filter((b) => b.name.toLowerCase().includes(filter.toLowerCase()))
+          .forEach((b) => {
+            const el = document.createElement("button");
+            el.type = "button";
+            el.className =
+              "brand-pick card-surface border border-line rounded-2xl p-3 flex flex-col items-center gap-2 hover:border-emerald transition";
+            el.dataset.brand = b.name;
+            el.innerHTML = `
+        <span class="w-10 h-10 rounded-lg flex items-center justify-center font-display font-semibold text-white text-sm" style="background:${markColor(b.name)}">${initials(b.name)}</span>
+        <span class="text-xs font-semibold text-center leading-tight">${b.name}</span>
+      `;
+            el.addEventListener("click", () => selectBrand(b.name));
+            brandGrid.appendChild(el);
+          });
+      }
+      renderBrands();
+      document
+        .getElementById("brandSearch")
+        .addEventListener("input", (e) => renderBrands(e.target.value));
+
+      function selectBrand(name) {
+        state.brand = name;
+        document
+          .querySelectorAll(".brand-pick")
+          .forEach((el) =>
+            el.classList.toggle("selected", el.dataset.brand === name),
+          );
+        nextBtn.disabled = false;
+      }
+
+      // ---- Step 2 setup ----
+      function primeStepTwo() {
+        const b = brands.find((x) => x.name === state.brand);
+        document.getElementById("selectedBrandName").textContent = b.name;
+        const mark = document.getElementById("selectedMark");
+        mark.textContent = initials(b.name);
+        mark.style.background = markColor(b.name);
+        recalcPayout();
+      }
+      function recalcPayout() {
+        const b = brands.find((x) => x.name === state.brand);
+        const amt =
+          parseFloat(document.getElementById("cardAmount").value) || 0;
+        state.amount = amt;
+        document.getElementById("payoutPreview").textContent = fmt(
+          b.rate * amt,
+        );
+      }
+      document
+        .getElementById("cardAmount")
+        .addEventListener("input", recalcPayout);
+
+      document.querySelectorAll("[data-cardtype]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("[data-cardtype]").forEach((b) => {
+            b.classList.remove("seg-active");
+            b.classList.add("text-inksoft");
+          });
+          btn.classList.add("seg-active");
+          btn.classList.remove("text-inksoft");
+          state.type = btn.dataset.cardtype;
+          const isPhysical = state.type === "physical";
+          document
+            .getElementById("ecodeFields")
+            .classList.toggle("hidden", isPhysical);
+          document
+            .getElementById("physicalFields")
+            .classList.toggle("hidden", !isPhysical);
+        });
+      });
+
+      // Upload preview
+      const cardImage = document.getElementById("cardImage");
+      const imagePreviews = document.getElementById("imagePreviews");
+      const dropzone = document.getElementById("dropzone");
+      function renderPreviews(files) {
+        imagePreviews.innerHTML = "";
+        Array.from(files)
+          .slice(0, 4)
+          .forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = document.createElement("img");
+              img.src = e.target.result;
+              img.className =
+                "w-full aspect-square object-cover rounded-lg border border-line";
+              imagePreviews.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          });
+      }
+      cardImage.addEventListener("change", () =>
+        renderPreviews(cardImage.files),
+      );
+      ["dragover", "dragleave", "drop"].forEach((evt) => {
+        dropzone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          dropzone.classList.toggle("drag-over", evt === "dragover");
+          if (evt === "drop" && e.dataTransfer.files.length) {
+            cardImage.files = e.dataTransfer.files;
+            renderPreviews(e.dataTransfer.files);
+          }
+        });
+      });
+
+      // ---- Step 3 setup ----
+      function primeStepThree() {
+        const b = brands.find((x) => x.name === state.brand);
+        document.getElementById("reviewBrand").textContent = b.name;
+        document.getElementById("reviewPayout").textContent = fmt(
+          b.rate * state.amount,
+        );
+        document.getElementById("reviewType").textContent =
+          state.type === "ecode" ? "E-code" : "Physical card";
+        const mark = document.getElementById("reviewMark");
+        mark.textContent = initials(b.name);
+        mark.style.background = markColor(b.name);
+        document.getElementById("revBrand").textContent = b.name;
+        document.getElementById("revType").textContent =
+          state.type === "ecode" ? "E-code" : "Physical card";
+        document.getElementById("revValue").textContent =
+          "$" + state.amount.toFixed(2);
+        document.getElementById("revRate").textContent = fmt(b.rate) + "/$";
+      }
+
+      // ---- Step 4 setup ----
+      function primeStepFour() {
+        const ref = "TXN-" + Math.floor(1000 + Math.random() * 9000) + "-CM-NG";
+        document.getElementById("refCode").textContent = "Ref · " + ref;
+      }
+
+      // ---- Step navigation ----
+      const steps = document.querySelectorAll(".flow-step");
+      const stepTitles = ["Choose a brand", "Card details", "Review", "Done"];
+      let current = 1;
+      const nextBtn = document.getElementById("nextBtn");
+      const prevBtn = document.getElementById("prevBtn");
+      const backLink = document.getElementById("backLink");
+
+      function showStep(n) {
+        current = n;
+        steps.forEach((s) =>
+          s.classList.toggle("active", +s.dataset.step === n),
+        );
+        document.getElementById("stepTitle").textContent = stepTitles[n - 1];
+        document.getElementById("stepCount").textContent = `Step ${n} of 4`;
+        document.getElementById("progressFill").style.width =
+          (n / 4) * 100 + "%";
+        prevBtn.classList.toggle("hidden", n === 1 || n === 4);
+        document
+          .getElementById("flowFooter")
+          .classList.toggle("hidden", n === 4);
+        nextBtn.textContent = n === 3 ? "Submit card" : "Continue";
+        nextBtn.disabled = n === 1 && !state.brand;
+        if (n === 2) primeStepTwo();
+        if (n === 3) primeStepThree();
+        if (n === 4) primeStepFour();
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }
+
+      nextBtn.addEventListener("click", () => {
+        if (current < 4) showStep(current + 1);
+      });
+      prevBtn.addEventListener("click", () => {
+        if (current > 1) showStep(current - 1);
+      });
+
+      document
+        .getElementById("sellAnotherBtn")
+        .addEventListener("click", () => {
+          state = { brand: null, type: "ecode", amount: 100 };
+          document.getElementById("brandSearch").value = "";
+          renderBrands();
+          showStep(1);
+        });
+
+      // ---- Theme ----
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const iconMoon = document.getElementById("iconMoon");
+      const iconSun = document.getElementById("iconSun");
+      function applyTheme(isDark) {
+        root.classList.toggle("dark", isDark);
+        iconMoon.classList.toggle("hidden", isDark);
+        iconSun.classList.toggle("hidden", !isDark);
+        localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
+      }
+      const saved = localStorage.getItem("cardmax-theme");
+      applyTheme(
+        saved
+          ? saved === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches,
+      );
+      themeToggle.addEventListener("click", () =>
+        applyTheme(!root.classList.contains("dark")),
+      );
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
+</html>
