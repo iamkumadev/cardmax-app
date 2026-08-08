@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings — CardMax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+    <script>
+      function withOpacity(v) {
+        return ({ opacityValue }) =>
+          opacityValue !== undefined
+            ? `rgb(var(${v}) / ${opacityValue})`
+            : `rgb(var(${v}))`;
+      }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              paper: withOpacity("--paper"),
+              paper2: withOpacity("--surface-2"),
+              ink: withOpacity("--ink"),
+              inksoft: withOpacity("--ink-soft"),
+              emerald: withOpacity("--emerald"),
+              emeraldDeep: withOpacity("--emerald-deep"),
+              coral: withOpacity("--coral"),
+              gold: withOpacity("--gold"),
+              line: withOpacity("--line"),
+            },
+            fontFamily: {
+              display: ["Fraunces", "serif"],
+              ui: ["Space Grotesk", "sans-serif"],
+              mono: ["IBM Plex Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --paper: 238 241 236;
+        --surface: 255 255 255;
+        --surface-2: 228 233 225;
+        --line: 198 208 194;
+        --ink: 20 32 24;
+        --ink-soft: 75 86 78;
+        --emerald: 47 111 78;
+        --emerald-deep: 31 79 55;
+        --gold: 201 162 39;
+        --coral: 255 107 74;
+      }
+      html.dark {
+        --paper: 15 25 19;
+        --surface: 22 34 26;
+        --surface-2: 28 42 33;
+        --line: 42 58 47;
+        --ink: 237 242 234;
+        --ink-soft: 159 175 156;
+        --emerald: 79 161 121;
+        --emerald-deep: 107 190 148;
+        --gold: 217 182 70;
+        --coral: 255 128 100;
+      }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: rgb(var(--paper));
+        color: rgb(var(--ink));
+      }
+      .card-surface {
+        background: rgb(var(--surface));
+      }
+      :focus-visible {
+        outline: 2px solid rgb(var(--emerald));
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      /* Toggle switch */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .switch .track {
+        position: absolute;
+        inset: 0;
+        background: rgb(var(--surface-2));
+        border-radius: 999px;
+        transition: background 0.15s;
+      }
+      .switch .thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        background: rgb(var(--surface));
+        border: 1px solid rgb(var(--line));
+        border-radius: 999px;
+        transition: transform 0.15s;
+      }
+      .switch input:checked + .track {
+        background: rgb(var(--emerald));
+      }
+      .switch input:checked + .track .thumb {
+        transform: translateX(16px);
+        border-color: transparent;
+      }
+    </style>
+  </head>
+  <body class="font-ui antialiased">
+    <header
+      class="max-w-2xl mx-auto px-5 sm:px-6 pt-6 pb-4 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <a
+          href="index.html"
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Back"
+        >
+          <i data-lucide="arrow-left" class="w-[17px] h-[17px]"></i>
+        </a>
+        <h1 class="font-display font-semibold text-xl">Settings</h1>
+      </div>
+      <button
+        id="themeToggle"
+        class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+        aria-label="Toggle dark mode"
+      >
+        <i data-lucide="moon" id="iconMoon" class="w-[16px] h-[16px]"></i>
+        <i data-lucide="sun" id="iconSun" class="w-[16px] h-[16px] hidden"></i>
+      </button>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-5 sm:px-6 pb-20 space-y-8">
+      <!-- Profile -->
+      <section>
+        <p
+          class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+        >
+          Profile
+        </p>
+        <div class="card-surface border border-line rounded-2xl p-5 space-y-4">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-14 h-14 rounded-full bg-emerald/10 flex items-center justify-center"
+            >
+              <i data-lucide="user" class="w-6 h-6 text-emerald"></i>
+            </div>
+            <div>
+              <p class="font-semibold">LS12505263</p>
+              <p class="text-xs font-mono text-inksoft">Verified account</p>
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-inksoft mb-1.5"
+                >Full name</label
+              >
+              <input
+                type="text"
+                value="LS12505263"
+                class="w-full border border-line rounded-xl px-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-inksoft mb-1.5"
+                >Email</label
+              >
+              <input
+                type="email"
+                value="ls12505263@example.com"
+                class="w-full border border-line rounded-xl px-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none"
+              />
+            </div>
+          </div>
+          <button class="text-sm font-semibold text-emerald hover:underline">
+            Save changes
+          </button>
+        </div>
+      </section>
+
+      <!-- Payout details -->
+      <section>
+        <p
+          class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+        >
+          Payout details
+        </p>
+        <div class="card-surface border border-line rounded-2xl p-5 space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-inksoft mb-1.5"
+                >Bank name</label
+              >
+              <input
+                type="text"
+                placeholder="e.g. GTBank"
+                class="w-full border border-line rounded-xl px-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-inksoft mb-1.5"
+                >Account number</label
+              >
+              <input
+                type="text"
+                placeholder="0123456789"
+                class="w-full border border-line rounded-xl px-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none font-mono"
+              />
+            </div>
+          </div>
+          <button class="text-sm font-semibold text-emerald hover:underline">
+            Save payout details
+          </button>
+        </div>
+      </section>
+
+      <!-- Security -->
+      <section>
+        <p
+          class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+        >
+          Security
+        </p>
+        <div class="card-surface border border-line rounded-2xl p-5 space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-inksoft mb-1.5"
+              >Current password</label
+            >
+            <input
+              type="password"
+              class="w-full border border-line rounded-xl px-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none"
+              placeholder="••••••••"
+            />
+          </div>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-inksoft mb-1.5"
+                >New password</label
+              >
+              <input
+                type="password"
+                class="w-full border border-line rounded-xl px-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none"
+                placeholder="••••••••"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-inksoft mb-1.5"
+                >Confirm new password</label
+              >
+              <input
+                type="password"
+                class="w-full border border-line rounded-xl px-3 py-2.5 text-sm font-medium card-surface focus:border-emerald outline-none"
+                placeholder="••••••••"
+              />
+            </div>
+          </div>
+          <button class="text-sm font-semibold text-emerald hover:underline">
+            Update password
+          </button>
+        </div>
+      </section>
+
+      <!-- Notification preferences -->
+      <section>
+        <p
+          class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+        >
+          Notification preferences
+        </p>
+        <div
+          class="card-surface border border-line rounded-2xl divide-y divide-line"
+        >
+          <label class="flex items-center justify-between p-4">
+            <div>
+              <p class="text-sm font-semibold">Email alerts</p>
+              <p class="text-xs text-inksoft">
+                Trade status, payouts, account activity
+              </p>
+            </div>
+            <span class="switch"
+              ><input type="checkbox" checked /><span class="track"
+                ><span class="thumb"></span></span
+            ></span>
+          </label>
+          <label class="flex items-center justify-between p-4">
+            <div>
+              <p class="text-sm font-semibold">SMS alerts</p>
+              <p class="text-xs text-inksoft">Only for payout confirmations</p>
+            </div>
+            <span class="switch"
+              ><input type="checkbox" checked /><span class="track"
+                ><span class="thumb"></span></span
+            ></span>
+          </label>
+          <label class="flex items-center justify-between p-4">
+            <div>
+              <p class="text-sm font-semibold">Push notifications</p>
+              <p class="text-xs text-inksoft">
+                Real-time updates on this device
+              </p>
+            </div>
+            <span class="switch"
+              ><input type="checkbox" /><span class="track"
+                ><span class="thumb"></span></span
+            ></span>
+          </label>
+          <label class="flex items-center justify-between p-4">
+            <div>
+              <p class="text-sm font-semibold">Promotional offers</p>
+              <p class="text-xs text-inksoft">
+                Bonus rates and new brand announcements
+              </p>
+            </div>
+            <span class="switch"
+              ><input type="checkbox" /><span class="track"
+                ><span class="thumb"></span></span
+            ></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Danger zone -->
+      <section>
+        <p
+          class="text-xs font-semibold uppercase tracking-wide text-coral mb-3"
+        >
+          Danger zone
+        </p>
+        <div
+          class="border border-coral/30 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap"
+        >
+          <div>
+            <p class="text-sm font-semibold">Deactivate account</p>
+            <p class="text-xs text-inksoft">
+              Your balance must be ₦0 before you can deactivate.
+            </p>
+          </div>
+          <button
+            class="text-sm font-semibold text-coral border border-coral/40 px-4 py-2 rounded-full hover:bg-coral/5 transition"
+          >
+            Deactivate
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const iconMoon = document.getElementById("iconMoon");
+      const iconSun = document.getElementById("iconSun");
+      function applyTheme(isDark) {
+        root.classList.toggle("dark", isDark);
+        iconMoon.classList.toggle("hidden", isDark);
+        iconSun.classList.toggle("hidden", !isDark);
+        localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
+      }
+      const saved = localStorage.getItem("cardmax-theme");
+      applyTheme(
+        saved
+          ? saved === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches,
+      );
+      themeToggle.addEventListener("click", () =>
+        applyTheme(!root.classList.contains("dark")),
+      );
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
+</html>

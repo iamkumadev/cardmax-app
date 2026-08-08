@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications — CardMax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+    <script>
+      function withOpacity(v) {
+        return ({ opacityValue }) =>
+          opacityValue !== undefined
+            ? `rgb(var(${v}) / ${opacityValue})`
+            : `rgb(var(${v}))`;
+      }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              paper: withOpacity("--paper"),
+              paper2: withOpacity("--surface-2"),
+              ink: withOpacity("--ink"),
+              inksoft: withOpacity("--ink-soft"),
+              emerald: withOpacity("--emerald"),
+              emeraldDeep: withOpacity("--emerald-deep"),
+              coral: withOpacity("--coral"),
+              gold: withOpacity("--gold"),
+              line: withOpacity("--line"),
+            },
+            fontFamily: {
+              display: ["Fraunces", "serif"],
+              ui: ["Space Grotesk", "sans-serif"],
+              mono: ["IBM Plex Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --paper: 238 241 236;
+        --surface: 255 255 255;
+        --surface-2: 228 233 225;
+        --line: 198 208 194;
+        --ink: 20 32 24;
+        --ink-soft: 75 86 78;
+        --emerald: 47 111 78;
+        --emerald-deep: 31 79 55;
+        --gold: 201 162 39;
+        --coral: 255 107 74;
+      }
+      html.dark {
+        --paper: 15 25 19;
+        --surface: 22 34 26;
+        --surface-2: 28 42 33;
+        --line: 42 58 47;
+        --ink: 237 242 234;
+        --ink-soft: 159 175 156;
+        --emerald: 79 161 121;
+        --emerald-deep: 107 190 148;
+        --gold: 217 182 70;
+        --coral: 255 128 100;
+      }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: rgb(var(--paper));
+        color: rgb(var(--ink));
+      }
+      .card-surface {
+        background: rgb(var(--surface));
+      }
+      :focus-visible {
+        outline: 2px solid rgb(var(--emerald));
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+      .unread-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgb(var(--emerald));
+        flex-shrink: 0;
+      }
+      .notif-item.is-read .unread-dot {
+        visibility: hidden;
+      }
+      .notif-item.is-read {
+        opacity: 0.6;
+      }
+    </style>
+  </head>
+  <body class="font-ui antialiased">
+    <header
+      class="max-w-2xl mx-auto px-5 sm:px-6 pt-6 pb-4 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <a
+          href="index.html"
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Back"
+        >
+          <i data-lucide="arrow-left" class="w-[17px] h-[17px]"></i>
+        </a>
+        <h1 class="font-display font-semibold text-xl">Notifications</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          id="markAllBtn"
+          class="text-xs font-semibold text-emerald hover:underline hidden sm:inline"
+        >
+          Mark all read
+        </button>
+        <button
+          id="themeToggle"
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Toggle dark mode"
+        >
+          <i data-lucide="moon" id="iconMoon" class="w-[16px] h-[16px]"></i>
+          <i
+            data-lucide="sun"
+            id="iconSun"
+            class="w-[16px] h-[16px] hidden"
+          ></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-5 sm:px-6 pb-20">
+      <button
+        id="markAllBtnMobile"
+        class="text-xs font-semibold text-emerald hover:underline mb-4 sm:hidden"
+      >
+        Mark all read
+      </button>
+
+      <p
+        class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+      >
+        Today
+      </p>
+      <div
+        class="card-surface border border-line rounded-2xl divide-y divide-line mb-8"
+      >
+        <button
+          class="notif-item w-full text-left flex items-start gap-3 p-4 hover:bg-paper2 transition"
+        >
+          <span
+            class="w-9 h-9 rounded-full bg-emerald/10 flex items-center justify-center shrink-0"
+          >
+            <i
+              data-lucide="check-circle"
+              class="w-[18px] h-[18px] text-emerald"
+            ></i>
+          </span>
+          <span class="flex-1 min-w-0">
+            <span class="flex items-center justify-between gap-2">
+              <span class="text-sm font-semibold">Card sold — Steam</span>
+              <span class="text-xs font-mono text-inksoft shrink-0"
+                >2h ago</span
+              >
+            </span>
+            <span class="block text-sm text-inksoft mt-0.5"
+              >₦121,364 was added to your balance.</span
+            >
+          </span>
+          <span class="unread-dot mt-1"></span>
+        </button>
+        <button
+          class="notif-item w-full text-left flex items-start gap-3 p-4 hover:bg-paper2 transition"
+        >
+          <span
+            class="w-9 h-9 rounded-full bg-gold/15 flex items-center justify-center shrink-0"
+          >
+            <i data-lucide="clock" class="w-[18px] h-[18px] text-gold"></i>
+          </span>
+          <span class="flex-1 min-w-0">
+            <span class="flex items-center justify-between gap-2">
+              <span class="text-sm font-semibold"
+                >Card under review — Amazon</span
+              >
+              <span class="text-xs font-mono text-inksoft shrink-0"
+                >5h ago</span
+              >
+            </span>
+            <span class="block text-sm text-inksoft mt-0.5"
+              >We're verifying your physical card photo.</span
+            >
+          </span>
+          <span class="unread-dot mt-1"></span>
+        </button>
+      </div>
+
+      <p
+        class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+      >
+        Earlier
+      </p>
+      <div
+        class="card-surface border border-line rounded-2xl divide-y divide-line"
+      >
+        <button
+          class="notif-item is-read w-full text-left flex items-start gap-3 p-4 hover:bg-paper2 transition"
+        >
+          <span
+            class="w-9 h-9 rounded-full bg-coral/15 flex items-center justify-center shrink-0"
+          >
+            <i
+              data-lucide="alert-circle"
+              class="w-[18px] h-[18px] text-coral"
+            ></i>
+          </span>
+          <span class="flex-1 min-w-0">
+            <span class="flex items-center justify-between gap-2">
+              <span class="text-sm font-semibold">Card rejected — Vanilla</span>
+              <span class="text-xs font-mono text-inksoft shrink-0"
+                >Yesterday</span
+              >
+            </span>
+            <span class="block text-sm text-inksoft mt-0.5"
+              >Card code didn't match — contact support to dispute.</span
+            >
+          </span>
+          <span class="unread-dot mt-1"></span>
+        </button>
+        <button
+          class="notif-item is-read w-full text-left flex items-start gap-3 p-4 hover:bg-paper2 transition"
+        >
+          <span
+            class="w-9 h-9 rounded-full bg-gold/15 flex items-center justify-center shrink-0"
+          >
+            <i data-lucide="gift" class="w-[18px] h-[18px] text-gold"></i>
+          </span>
+          <span class="flex-1 min-w-0">
+            <span class="flex items-center justify-between gap-2">
+              <span class="text-sm font-semibold">Daily bonus claimed</span>
+              <span class="text-xs font-mono text-inksoft shrink-0"
+                >2 days ago</span
+              >
+            </span>
+            <span class="block text-sm text-inksoft mt-0.5"
+              >₦50 added to your balance.</span
+            >
+          </span>
+          <span class="unread-dot mt-1"></span>
+        </button>
+      </div>
+    </main>
+
+    <script>
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const iconMoon = document.getElementById("iconMoon");
+      const iconSun = document.getElementById("iconSun");
+      function applyTheme(isDark) {
+        root.classList.toggle("dark", isDark);
+        iconMoon.classList.toggle("hidden", isDark);
+        iconSun.classList.toggle("hidden", !isDark);
+        localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
+      }
+      const saved = localStorage.getItem("cardmax-theme");
+      applyTheme(
+        saved
+          ? saved === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches,
+      );
+      themeToggle.addEventListener("click", () =>
+        applyTheme(!root.classList.contains("dark")),
+      );
+
+      document.querySelectorAll(".notif-item").forEach((item) => {
+        item.addEventListener("click", () => item.classList.add("is-read"));
+      });
+      function markAllRead() {
+        document
+          .querySelectorAll(".notif-item")
+          .forEach((i) => i.classList.add("is-read"));
+      }
+      document
+        .getElementById("markAllBtn")
+        .addEventListener("click", markAllRead);
+      document
+        .getElementById("markAllBtnMobile")
+        .addEventListener("click", markAllRead);
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
+</html>

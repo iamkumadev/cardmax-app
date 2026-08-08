@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transaction — CardMax</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+    <script>
+      function withOpacity(v) {
+        return ({ opacityValue }) =>
+          opacityValue !== undefined
+            ? `rgb(var(${v}) / ${opacityValue})`
+            : `rgb(var(${v}))`;
+      }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              paper: withOpacity("--paper"),
+              paper2: withOpacity("--surface-2"),
+              ink: withOpacity("--ink"),
+              inksoft: withOpacity("--ink-soft"),
+              emerald: withOpacity("--emerald"),
+              emeraldDeep: withOpacity("--emerald-deep"),
+              coral: withOpacity("--coral"),
+              gold: withOpacity("--gold"),
+              line: withOpacity("--line"),
+            },
+            fontFamily: {
+              display: ["Fraunces", "serif"],
+              ui: ["Space Grotesk", "sans-serif"],
+              mono: ["IBM Plex Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      :root {
+        --paper: 238 241 236;
+        --surface: 255 255 255;
+        --surface-2: 228 233 225;
+        --line: 198 208 194;
+        --ink: 20 32 24;
+        --ink-soft: 75 86 78;
+        --emerald: 47 111 78;
+        --emerald-deep: 31 79 55;
+        --gold: 201 162 39;
+        --coral: 255 107 74;
+      }
+      html.dark {
+        --paper: 15 25 19;
+        --surface: 22 34 26;
+        --surface-2: 28 42 33;
+        --line: 42 58 47;
+        --ink: 237 242 234;
+        --ink-soft: 159 175 156;
+        --emerald: 79 161 121;
+        --emerald-deep: 107 190 148;
+        --gold: 217 182 70;
+        --coral: 255 128 100;
+      }
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background: rgb(var(--paper));
+        color: rgb(var(--ink));
+      }
+      .card-surface {
+        background: rgb(var(--surface));
+      }
+      :focus-visible {
+        outline: 2px solid rgb(var(--emerald));
+        outline-offset: 2px;
+        border-radius: 6px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      .ticket {
+        position: relative;
+        display: flex;
+        border-radius: 20px;
+      }
+      .ticket .stub {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .ticket .stub::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        border-left: 2px dashed currentColor;
+        opacity: 0.35;
+      }
+      .notch {
+        position: absolute;
+        left: -12px;
+        width: 24px;
+        height: 24px;
+        background: rgb(var(--paper));
+        border-radius: 999px;
+      }
+      .notch-top {
+        top: -12px;
+      }
+      .notch-bottom {
+        bottom: -12px;
+      }
+
+      /* Status timeline */
+      .timeline-step {
+        position: relative;
+        padding-left: 2rem;
+        padding-bottom: 1.75rem;
+      }
+      .timeline-step:last-child {
+        padding-bottom: 0;
+      }
+      .timeline-step::before {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 22px;
+        bottom: -6px;
+        width: 2px;
+        background: rgb(var(--line));
+      }
+      .timeline-step:last-child::before {
+        display: none;
+      }
+      .timeline-dot {
+        position: absolute;
+        left: 0;
+        top: 2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: rgb(var(--line));
+        border: 2px solid rgb(var(--paper));
+      }
+      .timeline-step.is-done .timeline-dot {
+        background: rgb(var(--emerald));
+      }
+      .timeline-step.is-current .timeline-dot {
+        background: rgb(var(--gold));
+        box-shadow: 0 0 0 4px rgb(var(--gold) / 0.2);
+      }
+    </style>
+  </head>
+  <body class="font-ui antialiased">
+    <header
+      class="max-w-xl mx-auto px-5 sm:px-6 pt-6 pb-4 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <a
+          href="index.html"
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Back"
+        >
+          <i data-lucide="arrow-left" class="w-[17px] h-[17px]"></i>
+        </a>
+        <h1 class="font-display font-semibold text-xl">Transaction</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <button
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Download receipt"
+        >
+          <i data-lucide="download" class="w-[16px] h-[16px]"></i>
+        </button>
+        <button
+          id="themeToggle"
+          class="w-9 h-9 rounded-full card-surface border border-line flex items-center justify-center"
+          aria-label="Toggle dark mode"
+        >
+          <i data-lucide="moon" id="iconMoon" class="w-[16px] h-[16px]"></i>
+          <i
+            data-lucide="sun"
+            id="iconSun"
+            class="w-[16px] h-[16px] hidden"
+          ></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-xl mx-auto px-5 sm:px-6 pb-20">
+      <!-- Receipt ticket -->
+      <div class="ticket bg-emerald text-paper mb-8">
+        <div class="flex-1 p-6">
+          <div class="flex items-center justify-between mb-6">
+            <span
+              class="w-11 h-11 rounded-lg flex items-center justify-center font-display font-semibold"
+              style="background: #142018"
+              >S</span
+            >
+            <span
+              class="px-3 py-1 rounded-full text-xs font-semibold"
+              style="background: rgb(201 162 39 / 0.25); color: #f0d97a"
+              >Reviewing</span
+            >
+          </div>
+          <p class="text-xs text-paper/70 mb-1">Steam · E-code</p>
+          <p class="font-display font-semibold text-3xl">₦121,364.00</p>
+          <p class="text-xs font-mono text-paper/60 mt-2">
+            Ref · TXN-8842-CM-NG
+          </p>
+        </div>
+        <div class="stub w-14 flex items-center justify-center">
+          <span class="notch notch-top"></span>
+          <i data-lucide="ticket" class="w-5 h-5"></i>
+          <span class="notch notch-bottom"></span>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <p
+        class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-4"
+      >
+        Status
+      </p>
+      <div class="mb-8">
+        <div class="timeline-step is-done">
+          <span class="timeline-dot"></span>
+          <p class="text-sm font-semibold">Submitted</p>
+          <p class="text-xs text-inksoft font-mono">Aug 8, 2026 · 2:14 PM</p>
+        </div>
+        <div class="timeline-step is-current">
+          <span class="timeline-dot"></span>
+          <p class="text-sm font-semibold">Reviewing</p>
+          <p class="text-xs text-inksoft">
+            We're verifying the card code — usually takes under an hour.
+          </p>
+        </div>
+        <div class="timeline-step">
+          <span class="timeline-dot"></span>
+          <p class="text-sm font-semibold text-inksoft">Paid out</p>
+          <p class="text-xs text-inksoft">
+            Balance credited once verification completes.
+          </p>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <p
+        class="text-xs font-semibold uppercase tracking-wide text-inksoft mb-3"
+      >
+        Details
+      </p>
+      <div
+        class="card-surface border border-line rounded-2xl divide-y divide-line mb-8 text-sm"
+      >
+        <div class="flex justify-between p-4">
+          <span class="text-inksoft">Brand</span
+          ><span class="font-semibold">Steam</span>
+        </div>
+        <div class="flex justify-between p-4">
+          <span class="text-inksoft">Card type</span
+          ><span class="font-semibold">E-code</span>
+        </div>
+        <div class="flex justify-between p-4">
+          <span class="text-inksoft">Face value</span
+          ><span class="font-mono">$100.00</span>
+        </div>
+        <div class="flex justify-between p-4">
+          <span class="text-inksoft">Rate applied</span
+          ><span class="font-mono">₦1,213.64/$</span>
+        </div>
+        <div class="flex justify-between p-4">
+          <span class="text-inksoft">Reference</span
+          ><span class="font-mono">TXN-8842-CM-NG</span>
+        </div>
+      </div>
+
+      <a
+        href="#"
+        class="flex items-center justify-center gap-2 text-sm font-semibold text-emerald border border-line rounded-full py-3 hover:bg-paper2 transition"
+      >
+        <i data-lucide="headphones" class="w-4 h-4"></i>
+        Contact support about this trade
+      </a>
+    </main>
+
+    <script>
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("themeToggle");
+      const iconMoon = document.getElementById("iconMoon");
+      const iconSun = document.getElementById("iconSun");
+      function applyTheme(isDark) {
+        root.classList.toggle("dark", isDark);
+        iconMoon.classList.toggle("hidden", isDark);
+        iconSun.classList.toggle("hidden", !isDark);
+        localStorage.setItem("cardmax-theme", isDark ? "dark" : "light");
+      }
+      const saved = localStorage.getItem("cardmax-theme");
+      applyTheme(
+        saved
+          ? saved === "dark"
+          : window.matchMedia("(prefers-color-scheme: dark)").matches,
+      );
+      themeToggle.addEventListener("click", () =>
+        applyTheme(!root.classList.contains("dark")),
+      );
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
+</html>
