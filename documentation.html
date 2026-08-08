@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation — CardMax</title>
+    <meta
+      name="description"
+      content="Setup and customization documentation for the CardMax HTML template."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%2216%22 fill=%22%232F6F4E%22/><text x=%2216%22 y=%2222%22 font-family=%22Georgia,serif%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22>C</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"
+      defer
+    ></script>
+  </head>
+  <body class="font-ui antialiased">
+    <div class="lg:flex">
+      <!-- Sidebar TOC -->
+      <aside
+        class="lg:w-64 shrink-0 border-r border-line px-6 py-8 lg:sticky lg:top-0 lg:h-screen"
+      >
+        <div class="flex items-center gap-2 mb-8">
+          <div
+            class="w-8 h-8 rounded-full bg-emerald flex items-center justify-center text-paper font-display font-semibold text-sm"
+          >
+            C
+          </div>
+          <span class="font-display font-semibold">CardMax Docs</span>
+        </div>
+        <nav class="space-y-1 text-sm">
+          <a
+            href="#overview"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >Overview</a
+          >
+          <a
+            href="#structure"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >File structure</a
+          >
+          <a
+            href="#getting-started"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >Getting started</a
+          >
+          <a
+            href="#customizing"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >Customizing colors &amp; fonts</a
+          >
+          <a
+            href="#logos"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >Swapping in brand logos</a
+          >
+          <a
+            href="#pages"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >Page reference</a
+          >
+          <a
+            href="#credits"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >Credits &amp; license</a
+          >
+          <a
+            href="#support"
+            class="block px-3 py-2 rounded-lg hover:bg-paper2 transition"
+            >Support</a
+          >
+        </nav>
+      </aside>
+
+      <main class="flex-1 max-w-3xl mx-auto px-6 py-12 lg:px-12">
+        <h1 class="font-display font-semibold text-4xl mb-3">
+          CardMax Documentation
+        </h1>
+        <p class="text-inksoft mb-12">
+          A responsive HTML template for a gift-card exchange product — landing
+          page, auth flow, dashboard, and a full sell flow, all on one design
+          system.
+        </p>
+
+        <section id="overview" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">Overview</h2>
+          <p class="text-inksoft leading-relaxed mb-3">
+            CardMax is built with plain HTML, one shared static CSS file, and
+            vanilla JavaScript — no build step, no framework, no npm install
+            required. Open any file directly in a browser and it works.
+          </p>
+          <p class="text-inksoft leading-relaxed">
+            Every page shares one visual language: the die-cut "ticket stub"
+            component, a three-typeface system (Fraunces / Space Grotesk / IBM
+            Plex Mono), and a CSS-variable-based color system with a working
+            light/dark mode.
+          </p>
+        </section>
+
+        <section id="structure" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">
+            File structure
+          </h2>
+          <pre
+            class="card-surface border border-line rounded-xl p-4 text-xs font-mono overflow-x-auto"
+          >
+.
+├── landing.html            Public marketing page
+├── login.html               
+├── signup.html               Auth flow
+├── forgot-password.html      (email → OTP → reset)
+├── index.html                Dashboard (Home / Transactions / Me)
+├── sell.html                 Full 4-step sell flow
+├── settings.html             Profile, payout, security, preferences
+├── notifications.html
+├── transaction-detail.html
+├── style-guide.html           Design system reference
+├── 404.html
+├── css/
+│   └── styles.css            Every style in the template — one file
+└── CHANGELOG.txt</pre
+          >
+        </section>
+
+        <section id="getting-started" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">
+            Getting started
+          </h2>
+          <p class="text-inksoft leading-relaxed mb-3">
+            There's no build step. Unzip the download and open
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >landing.html</code
+            >
+            (or any page) directly in a browser, or serve the folder with any
+            static host — Vercel, Netlify, GitHub Pages, or a plain Apache/Nginx
+            server all work as-is.
+          </p>
+          <p class="text-inksoft leading-relaxed">
+            To deploy on Vercel: import the folder as a project, framework
+            preset <strong>"Other"</strong>, no build command, output directory
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded">.</code>
+          </p>
+        </section>
+
+        <section id="customizing" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">
+            Customizing colors &amp; fonts
+          </h2>
+          <p class="text-inksoft leading-relaxed mb-3">
+            Every color in the template is a CSS variable, defined once at the
+            top of
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >css/styles.css</code
+            >:
+          </p>
+          <pre
+            class="card-surface border border-line rounded-xl p-4 text-xs font-mono overflow-x-auto mb-3"
+          >
+:root {
+  --emerald: 47 111 78;   /* primary action color */
+  --gold: 201 162 39;     /* reward / bonus accent */
+  --coral: 255 107 74;    /* errors, destructive actions */
+  ...
+}
+html.dark { /* dark mode overrides of the same variables */ }</pre
+          >
+          <p class="text-inksoft leading-relaxed mb-3">
+            Change a value there and it updates everywhere that color is used —
+            no need to touch individual pages. Values are space-separated RGB
+            triplets (not hex) so opacity utilities like
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >bg-emerald/10</code
+            >
+            work correctly.
+          </p>
+          <p class="text-inksoft leading-relaxed">
+            Fonts are set near the top of the same file under
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >.font-display / .font-ui / .font-mono</code
+            >. Swap the Google Fonts
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >&lt;link&gt;</code
+            >
+            in each page's
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >&lt;head&gt;</code
+            >
+            and update these three declarations to change typefaces globally.
+          </p>
+        </section>
+
+        <section id="logos" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">
+            Swapping in real brand logos
+          </h2>
+          <p class="text-inksoft leading-relaxed mb-3">
+            <strong
+              >This template ships with no real brand logos or
+              trademarks.</strong
+            >
+            Gift-card tiles use a brand-neutral monogram system instead — an
+            initial on a deterministic color from the palette, generated in
+            JavaScript at runtime (see the
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >markColor()</code
+            >
+            function near the top of the script block on
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >index.html</code
+            >,
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >sell.html</code
+            >, and
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >landing.html</code
+            >).
+          </p>
+          <p class="text-inksoft leading-relaxed">
+            If you're deploying this for a real store with rights to specific
+            brand marks, replace the generated monogram markup with an
+            <code class="font-mono bg-paper2 px-1.5 py-0.5 rounded"
+              >&lt;img&gt;</code
+            >
+            tag per brand. Do not source logos from a live third-party API
+            (favicon services, etc.) in a production or resold product — license
+            or create the artwork directly.
+          </p>
+        </section>
+
+        <section id="pages" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">
+            Page reference
+          </h2>
+          <div
+            class="card-surface border border-line rounded-2xl divide-y divide-line text-sm"
+          >
+            <div class="p-4">
+              <span class="font-semibold">landing.html</span
+              ><span class="text-inksoft">
+                — hero, how-it-works, rates, FAQ</span
+              >
+            </div>
+            <div class="p-4">
+              <span class="font-semibold"
+                >login.html / signup.html / forgot-password.html</span
+              ><span class="text-inksoft">
+                — auth, split layout on desktop</span
+              >
+            </div>
+            <div class="p-4">
+              <span class="font-semibold">index.html</span
+              ><span class="text-inksoft">
+                — single-page dashboard, three views (Home/Transactions/Me)
+                switched by JS, sidebar on desktop, bottom tab bar on
+                mobile</span
+              >
+            </div>
+            <div class="p-4">
+              <span class="font-semibold">sell.html</span
+              ><span class="text-inksoft">
+                — 4-step flow: brand → type &amp; details → review →
+                confirmation</span
+              >
+            </div>
+            <div class="p-4">
+              <span class="font-semibold"
+                >settings.html / notifications.html /
+                transaction-detail.html</span
+              ><span class="text-inksoft">
+                — supporting screens linked from the dashboard</span
+              >
+            </div>
+          </div>
+        </section>
+
+        <section id="credits" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">
+            Credits &amp; license
+          </h2>
+          <ul class="space-y-2 text-sm text-inksoft">
+            <li>
+              <strong class="text-ink">Fraunces</strong> — SIL Open Font
+              License, via Google Fonts
+            </li>
+            <li>
+              <strong class="text-ink">Space Grotesk</strong> — SIL Open Font
+              License, via Google Fonts
+            </li>
+            <li>
+              <strong class="text-ink">IBM Plex Mono</strong> — SIL Open Font
+              License, via Google Fonts
+            </li>
+            <li>
+              <strong class="text-ink">Lucide icons</strong> — ISC License
+            </li>
+          </ul>
+        </section>
+
+        <section id="support" class="mb-14">
+          <h2 class="font-display font-semibold text-2xl mb-3">Support</h2>
+          <p class="text-inksoft leading-relaxed">
+            Questions about this template are answered through the item's
+            ThemeForest comment/support tab. Please check this documentation and
+            the change log before reaching out.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (window.lucide) lucide.createIcons();
+      });
+      if (document.readyState !== "loading" && window.lucide)
+        lucide.createIcons();
+    </script>
+  </body>
+</html>

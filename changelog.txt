@@ -1,0 +1,24 @@
+CardMax — HTML Template Changelog
+==================================
+
+v1.0.0
+------
+Initial release.
+
+- Public marketing/landing page
+- Auth flow: login, sign up, forgot password (email → OTP → reset)
+- Dashboard: Home, Transactions, Me (single-page, sidebar on desktop / bottom tab bar on mobile)
+- Full 4-step sell flow: brand → card type & details → review → confirmation
+- Card type branching: e-code (code entry) vs. physical card (photo upload)
+- Settings page: profile, payout details, security, notification preferences
+- Notifications page (read/unread states)
+- Transaction detail page with status timeline
+- Design system reference (style-guide.html)
+- Light and dark mode (persisted, respects system preference)
+- Brand-neutral "card mark" system — no third-party logos or trademarks bundled
+- Ticket-stub signature component used consistently across every page
+- Static, self-hosted CSS (no build step, no CDN framework dependency)
+- 404 page
+- Documentation
+
+Planned for future versions — see FEATURES.md in the repository for the full backlog.
